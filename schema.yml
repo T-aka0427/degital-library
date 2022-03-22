@@ -1,0 +1,50 @@
+users:
+  uid: {
+  userName: string,
+  adminFlag: boolean,
+  createdAt: timestamp,
+  updatedAt: timestamp
+  }
+
+register:
+  id: {
+    isbnId: number,
+    title: string,
+    author: string,
+    publicationDate: date,
+    purchaseDate: date,
+    price: number,
+    versionNumber: number,
+    numberOfBooks: number,
+    imageLink: string,
+    storageID: ref,
+    createdAt: timestamp,
+    updatedAt: timestamp
+  }
+
+storage:
+  storageId: {
+    storageLocation: string
+  }
+
+## セキュリティルール複雑化を避けるため、historyから独立させ、非正規化を採用
+lending: {
+  id: {
+    userName: ref,
+    isbnId: ref,
+    checkoutDate: date,
+    returnDate: date,
+    createdAt: timestamp,
+    updatedAt: timestamp
+  }
+}
+
+history: {
+  id: {
+    userName: ref,
+    isbnId: ref,
+    checkoutDate: date,
+    returnDate: date,
+    createdAt: timestamp,
+  }
+}
