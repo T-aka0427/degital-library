@@ -6,32 +6,32 @@ users:
   updatedAt: timestamp
   }
 
-register:
+books:
   id: {
-    isbnId: number,
+    isbn: string,
     title: string,
     author: string,
     publicationDate: date,
     purchaseDate: date,
     price: number,
     versionNumber: number,
-    numberOfBooks: number,
     imageLink: string,
-    storageID: ref,
+    storageLocation: ref,
     createdAt: timestamp,
     updatedAt: timestamp
   }
 
-storage:
+storages:
   storageId: {
     storageLocation: string
   }
 
-## セキュリティルール複雑化を避けるため、historyから独立させ、非正規化を採用
+## セキュリティルール複雑化を避けるため非正規化を採用。historyには状態を持たせず、lendingに切り出す
+
 lending: {
   id: {
-    userName: ref,
-    isbnId: ref,
+    uid: string,
+    isbn: string,
     checkoutDate: date,
     returnDate: date,
     createdAt: timestamp,
@@ -41,8 +41,8 @@ lending: {
 
 history: {
   id: {
-    userName: ref,
-    isbnId: ref,
+    uid: string,
+    isbn: string,
     checkoutDate: date,
     returnDate: date,
     createdAt: timestamp,

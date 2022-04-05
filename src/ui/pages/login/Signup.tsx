@@ -1,14 +1,12 @@
-/* ログイン
-  google認証でログイン
-*/
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { Formik, Field, Form } from "formik";
 
-import React, { useState } from "react";
+
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
+import { TextField } from "formik-mui";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -16,8 +14,12 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../../firebase/Firebase";
+
+import { createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+
+import { auth } from "../../../firebase/firebase";
+import { setUser } from "../../../firebase/firestore";
+import { signupSchema } from "./validationSchema";
 
 function Copyright(props: any) {
   return (
@@ -28,8 +30,8 @@ function Copyright(props: any) {
       {...props}
     >
       {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
+      <Link color="inherit">
+        Degital Library
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}
@@ -39,37 +41,8 @@ function Copyright(props: any) {
 
 const theme = createTheme();
 
-const Login = () => {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
-
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user;
-        // ...
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // ..
-      });
-  };
-
-  const onChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.currentTarget.value);
-  };
-  const onChangePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.currentTarget.value);
-  };
+const Signup = () => {
+  const navigate = useNavigate();
 
   return (
     <ThemeProvider theme={theme}>
@@ -86,64 +59,104 @@ const Login = () => {
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
             <LockOutlinedIcon />
           </Avatar>
-          <Typography component="h1" variant="h5">
+          <Typography component="h1" variant="h5" sx={{ mb: 3 }}>
             Sign up
           </Typography>
-          <Box
-            component="form"
-            noValidate
-            onSubmit={handleSubmit}
-            sx={{ mt: 3 }}
-          >
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
-                  onChange={onChangeEmail}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  name="password"
-                  label="Password"
-                  type="password"
-                  id="password"
-                  autoComplete="new-password"
-                  onChange={onChangePassword}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <FormControlLabel
-                  control={
-                    <Checkbox value="allowExtraEmails" color="primary" />
+          <Formik
+            initialValues={{
+              name: "",
+              email: "",
+              password: "",
+              confirmPassword: "",
+            }}
+            validationSchema={signupSchema}
+            onSubmit={(values, { setSubmitting }) => {
+              setTimeout(() => {
+                console.log("aa")
+                alert(JSON.stringify(values, null, 2));
+                createUserWithEmailAndPassword(auth, values.email, values.password)
+                .then(() => {
+                  try {
+                    onAuthStateChanged(auth, (user) => {
+                      if (user) {
+                        setUser(user.uid, values.name);
+                        navigate("/top");
+                      } else {
+                        throw new Error("登録に失敗しました")
+                      }
+                    });
+                  } catch(e: unknown) {
+                    if (e instanceof Error) {
+                      console.error("Error:" + e.message);
+                    }
                   }
-                  label="I want to receive inspiration, marketing promotions and updates via email."
-                />
+                })
+                .catch((e) => {
+                  console.log(e + ":エラーが発生しました。")
+                });
+                setSubmitting(false);
+              }, 400);
+            }}
+            validateOnChange={false}
+            validateOnBlur={false}
+          >
+            <Form autoComplete="off">
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <Field
+                    name="name"
+                    label="name"
+                    type="text"
+                    placeholder="User Name"
+                    fullWidth
+                    component={TextField}  
+                  />            
+                </Grid>
+                <Grid item xs={12}>
+                  <Field
+                    name="email"
+                    label="email"
+                    type="text"
+                    fullWidth
+                    component={TextField}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <Field
+                    name="password"
+                    label="password"
+                    type="password"
+                    fullWidth
+                    component={TextField}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <Field
+                    name="confirmPassword"
+                    label="confirmPassword"
+                    type="password"
+                    fullWidth
+                    component={TextField}
+                  />
+                </Grid>
               </Grid>
-            </Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Sign Up
-            </Button>
-            <Grid container justifyContent="flex-end">
-              <Grid item>
-                <Link href="#" variant="body2">
-                  Already have an account? Sign in
-                </Link>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Sign Up
+              </Button>
+              <Grid container justifyContent="flex-end">
+                <Grid item>
+                  <Link href="/" variant="body2">
+                    Already have an account? Sign in
+                  </Link>
+                </Grid>
               </Grid>
-            </Grid>
-          </Box>
+            </Form>
+          </Formik>
         </Box>
         <Copyright sx={{ mt: 5 }} />
       </Container>
@@ -151,4 +164,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;

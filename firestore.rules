@@ -1,15 +1,43 @@
 rules_version = '2';
 service cloud.firestore {
-  function isAuthenticated() { // 条件 1
-    return request.auth != null;
-  }
   match /databases/{database}/documents {
-    // match /test/{testID} {
-    //   allow read, write: if true;
-    // }
-    match /testRef/{uid} {
-      allow read: if isAuthenticated() && uid == request.auth.uid;
-       
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isUserAuthenticated(uid) {
+      return request.auth.uid == uid;
+    }
+
+    function userExists() {
+      return exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function getAdminFlag() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.adminFlag == true;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+      userExists() &&
+      getAdminFlag();
+    }
+
+    match /users/{uid} {
+      allow read: if isAuthenticated() && isUserAuthenticated(uid);
+      allow write: if isAuthenticated();
+    }
+    match /books/{bookId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+    match /storages/{storageId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+    match /lending/{lendingId} {
+      allow read: if isAuthenticated() && userExists();
+      allow write: if isAuthenticated() && userExists();
     }
   }
 }

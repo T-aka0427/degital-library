@@ -1,15 +1,24 @@
-/* DefaultButton
-  書籍情報の登録
-*/
-
 import React from "react";
 import Button from "@mui/material/Button";
+import { Box } from '@mui/system';
 
-const DefaultButton = (props: () => void) => {
+type Props = {
+	onClick: () => void,
+	label: string
+}
+const DefaultButton = (props: Props) => {
   return (
-    <Button variant="contained" color="primary" onClick={props}>
-      登録
-    </Button>
+		<Button 
+			variant="contained" 
+			sx={{
+				color: "#42a5f5",
+			}} 
+			onClick={props.onClick}
+		>
+			<Box sx={{color: '#FFF'}}>
+				{props.label}
+			</Box>
+		</Button> 
   );
 };
 
