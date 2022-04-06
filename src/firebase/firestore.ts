@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { db } from "../firebase/firebase";
 import { setDoc, collection, serverTimestamp, doc, runTransaction, query, where, getDocs, deleteDoc, getDoc, QuerySnapshot, DocumentData,DocumentReference } from "firebase/firestore";
 import { FormValues, storageLocation } from "../models/BookForm";
@@ -132,7 +133,7 @@ export const getBook = async(isbn: string) => {
 			title: doc.data().title,
 			author: doc.data().author,
 			publisherName: doc.data().publisherName,
-			publicationDate: doc.data().publicationDate,
+			publicationDate: dayjs(doc.data().publicationDate.toDate()).format("YYYY年MM月DD日") as string,
 			versionNumber: doc.data().versionNumber,
 			imageLink: doc.data().imageLink.replace(/ex=200x200/, "ex=400x400"),
 			pcImageLink: doc.data().imageLink.replace(/ex=200x200/, "ex=500x500"),

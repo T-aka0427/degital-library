@@ -2,17 +2,14 @@ import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate, Navigate } from "react-router-dom";
 
-import Button from '@mui/material/Button/Button';
 import AppBar from '@mui/material/AppBar';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { grey } from '@mui/material/colors';
-import { css } from '@emotion/react';
 
 import { signOut } from "firebase/auth";
-
 import { AuthContext } from "../../auth/AuthProvider";
 import { auth } from '../../firebase/firebase';
 import DefaultButton from '../parts/DefaultButton';
@@ -70,7 +67,7 @@ const Header = () => {
             onClick={()=> navigate("/user/profile/1")}
           />
           <Box sx={{mt: 5, mr:3}}>
-            <DefaultButton onClick={logOut} label={"SIGNOUT"}/>  
+            <DefaultButton onClick={logOut} label={"SIGNOUT"} />  
           </Box>
         </Box>
       </AppBar>

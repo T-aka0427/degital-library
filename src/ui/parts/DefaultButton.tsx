@@ -4,7 +4,7 @@ import { Box } from '@mui/system';
 
 type Props = {
 	onClick: () => void,
-	label: string
+	label: string,
 }
 const DefaultButton = (props: Props) => {
   return (

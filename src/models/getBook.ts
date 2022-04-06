@@ -3,7 +3,7 @@ export type bookInfo = {
     title: string;
     author: string;
     publisherName: string;
-    publicationDate: Date;
+    publicationDate: string;
     versionNumber: number;
     imageLink: string;
     pcImageLink: string;

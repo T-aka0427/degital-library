@@ -1,28 +1,28 @@
-import React from 'react';
-
+import React, {useContext} from 'react';
+import { useNavigate } from "react-router-dom";
 import { Container, Grid, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { Button } from '@mui/material';
 
 import { useGetBook } from '../../../hooks/useGetBook';
+import { AuthContext } from "../../../auth/AuthProvider";
 import DefaultButton from '../../parts/DefaultButton';
 
 
 const Contents = () => {
   
-  const {currentUser, bookInfo, status} = useGetBook();
+  const {bookInfo, status} = useGetBook();
+  const currentUser = useContext(AuthContext);
+  const navigate = useNavigate();
   const theme = useTheme();
   const pcSize = useMediaQuery(theme.breakpoints.up('md'));
 
-  const borrow = () => {
-    console.log("borrow")
-  }
+  console.log(bookInfo.publicationDate);
 
   const infoElemetnt = (
     <>
-      <Typography sx={{pl: 2, pt: 5}} variant='h5'>
+      <Typography sx={{pl: 2, pt: 5}} variant='h6'>
       {bookInfo.title}
       </Typography>
       <Typography sx={{pl: 3, pt: 3}}>
@@ -32,7 +32,7 @@ const Contents = () => {
         出版社：{bookInfo.publisherName}
       </Typography>
       <Typography sx={{pl: 3, pt: 2}}>
-        出版日：
+        出版日：{bookInfo.publicationDate}
       </Typography>
       <Typography sx={{pl: 3, pt: 2}}>
         版数：{bookInfo.versionNumber}
@@ -58,7 +58,7 @@ const Contents = () => {
           style={{
             boxShadow: "0 0 2px gray",
           }}
-        />
+          />
         :
           <img 
             src={bookInfo.imageLink} 
@@ -74,32 +74,38 @@ const Contents = () => {
               sx={{
                 boxShadow: "0 0 5px gray",
                 width: 400,
-                height: 430,
                 bgcolor: "#FFF",
                 ml: 5,
-                mt: 3
+                mt: 3,
+                pb: 5
               }}>
               {infoElemetnt}
               <Box sx={{mt: 5, ml:18}}>
-                <DefaultButton onClick={borrow} label="本を借りる"/>
+                <DefaultButton 
+                  onClick={() => {navigate(`/lending/new/${currentUser}/${bookInfo.isbn}`)}} 
+                  label="本を借りる"
+                />
               </Box>
             </Box>
-        :
-          <Box
-            sx={{
-              boxShadow: "0 0 5px gray",
-              width: 350,
-              height: 450,
-              bgcolor: "#FFF",
-              mt: 5,
-            }}>
+          :
+            <Box
+              sx={{
+                boxShadow: "0 0 5px gray",
+                width: 350,
+                bgcolor: "#FFF",
+                mt: 5,
+                pb: 5
+              }}>
               {infoElemetnt}
               <Box sx={{mt: 5, ml:15}}>
-                <DefaultButton onClick={borrow} label="本を借りる"/>
+                <DefaultButton
+                  onClick={() => {navigate(`/lending/new/${currentUser}/${bookInfo.isbn}`)}} 
+                  label="本を借りる"
+                />
               </Box>
-        </Box>
-        }
-      </Grid>
+            </Box>
+          }
+        </Grid>
 			</Grid>
     </Container>
   )
