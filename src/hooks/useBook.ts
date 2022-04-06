@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-import { FormValues, storageLocation } from "../models/BookForm";
+import { FormValues, StorageLocation } from "../models/BookForm";
 import { editDate, today } from "../ui/pages/admin/dateFormat";
 import { getStorageLocation } from "../firebase/firestore";
 import { color } from "@mui/system";
@@ -11,7 +11,7 @@ export const useBook = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [submit, setSubmit] = useState({flag: true, msg: "", color: ""})
-  const [selectList, setSelectList] = useState<storageLocation[]>([]);
+  const [selectList, setSelectList] = useState<StorageLocation[]>([]);
   const [formData, setFormData] = useState<FormValues>(
     {
       isbn: "",

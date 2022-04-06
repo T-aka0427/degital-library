@@ -5,10 +5,12 @@ import { Box } from '@mui/system';
 type Props = {
 	onClick: () => void,
 	label: string,
+	type: "button" | "submit" | "reset" | undefined
 }
 const DefaultButton = (props: Props) => {
   return (
-		<Button 
+		<Button
+			type={props.type}
 			variant="contained" 
 			sx={{
 				color: "#42a5f5",

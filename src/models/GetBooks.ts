@@ -1,4 +1,4 @@
-export type imageLink = {
+export type GetBooks = {
     isbn: string;
     imageLink: string;
 }

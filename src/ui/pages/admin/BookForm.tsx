@@ -8,18 +8,18 @@ import { useFormik } from "formik";
 import { Container } from "@mui/material";
 import {FormControl} from "@mui/material";
 import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import { Box } from "@mui/system";
 import { Typography } from "@mui/material";
 import { FormHelperText } from "@mui/material";
 
 import { useBook } from "../../../hooks/useBook";
-import { validationSchema } from "./validationSchema";
+import { validationSchema } from "../../../validation/bookSchema";
 import StorageSelect from "./StorageSelect";
 import Footer from "../../templates/Footer";
 import { setBook } from "../../../firebase/firestore";
 import DefaultButton from "../../parts/DefaultButton";
+import SubmitButton from "../../parts/SubmitButton";
 
 const BookForm = () => {
   const { scan, onChangeIsbn, formData, loading, error, selectList, submitSuccess, submitFail, submit } = useBook();
@@ -76,7 +76,11 @@ const BookForm = () => {
           </FormControl>
         </Grid>
         <Grid item md={3} sm={4} sx={{mt:1}}>
-          <DefaultButton onClick={scan} label="スキャン" />
+          <DefaultButton 
+            type="button" 
+            onClick={scan} 
+            label="スキャン"
+          />
         </Grid>
       </Grid>
       { error &&
@@ -96,7 +100,7 @@ const BookForm = () => {
             <TextField
               label="isbnコード" 
               id="outlined-required"
-              name="title"
+              name="isbn"
               value={formik.values.isbn}
               onChange={formik.handleChange}
               variant="outlined"
@@ -315,13 +319,7 @@ const BookForm = () => {
           </Grid>
         </Grid>
         <Box sx={{mt: 4, textAlign: "center"}}>
-          <Button
-            type="submit"
-            variant="contained" 
-            color="primary"
-          >
-            登録
-          </Button>
+          <SubmitButton label="登録" />
         </Box>
       </Box>
       <Footer />

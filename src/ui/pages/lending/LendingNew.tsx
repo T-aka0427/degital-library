@@ -1,16 +1,18 @@
-/* ログイン
-  google認証でログイン
-*/
-
 import React from "react";
-import { Outlet } from "react-router-dom";
+
+import { Container } from "@mui/material";
+import Header from "../../templates/Header";
+import Footer from "../../templates/Footer";
+import LendingForm from "./LendingForm";
+
 
 const LendingNew = () => {
   return (
-    <>
-      <div>LendingNew Page</div>
-      <Outlet />
-    </>
+    <Container maxWidth="lg">
+      <Header />
+      <LendingForm />
+      <Footer />
+    </Container>
   );
 };
 

@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { useParams } from 'react-router-dom';
 
-import { bookInfo, Status } from "../models/getBook";
+import { BookInfo, Status } from "../models/getBook";
 import { getBook, checkLendingStatus } from "../firebase/firestore";
 
 export const useGetBook = () => {
-	const [bookInfo, setBookInfo] = useState<bookInfo>({
+	const [bookInfo, setBookInfo] = useState<BookInfo>({
 		isbn: "",
     title: "",
     author: "",

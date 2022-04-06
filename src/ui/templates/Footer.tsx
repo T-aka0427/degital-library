@@ -11,6 +11,8 @@ const Footer = () => {
     backgroundColor: "#B1F9D0",
     width: "100%",
     bottom: 0,
-  }}>Copyright © Degital Library All Rights Reserved.</Box>; };
+  }}>Copyright © Degital Library All Rights Reserved.
+  </Box>; 
+};
 
 export default Footer;

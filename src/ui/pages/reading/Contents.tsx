@@ -81,7 +81,8 @@ const Contents = () => {
               }}>
               {infoElemetnt}
               <Box sx={{mt: 5, ml:18}}>
-                <DefaultButton 
+                <DefaultButton
+                  type="button" 
                   onClick={() => {navigate(`/lending/new/${currentUser}/${bookInfo.isbn}`)}} 
                   label="本を借りる"
                 />
@@ -99,6 +100,7 @@ const Contents = () => {
               {infoElemetnt}
               <Box sx={{mt: 5, ml:15}}>
                 <DefaultButton
+                  type="submit"
                   onClick={() => {navigate(`/lending/new/${currentUser}/${bookInfo.isbn}`)}} 
                   label="本を借りる"
                 />

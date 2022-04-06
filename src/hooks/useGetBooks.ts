@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 
 import { getImageLink } from "../firebase/firestore";
-import { imageLink } from "../models/imageLink";
+import { GetBooks } from "../models/GetBooks";
 
 export const useGetBooks = () => {
   
-	const [images, setImages] = useState<imageLink[]>([]);
+	const [images, setImages] = useState<GetBooks[]>([]);
 
 	useEffect(() => {
 		fetch();

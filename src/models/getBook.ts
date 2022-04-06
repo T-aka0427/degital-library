@@ -1,4 +1,4 @@
-export type bookInfo = {
+export type BookInfo = {
     isbn: string;
     title: string;
     author: string;

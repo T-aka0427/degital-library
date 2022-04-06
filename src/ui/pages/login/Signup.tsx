@@ -19,7 +19,7 @@ import { createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/aut
 
 import { auth } from "../../../firebase/firebase";
 import { setUser } from "../../../firebase/firestore";
-import { signupSchema } from "./validationSchema";
+import { signupSchema } from "../../../validation/loginSchema";
 
 function Copyright(props: any) {
   return (

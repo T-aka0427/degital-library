@@ -1,9 +1,9 @@
 import dayjs from "dayjs";
 import { db } from "../firebase/firebase";
 import { setDoc, collection, serverTimestamp, doc, runTransaction, query, where, getDocs, deleteDoc, getDoc, QuerySnapshot, DocumentData,DocumentReference } from "firebase/firestore";
-import { FormValues, storageLocation } from "../models/BookForm";
-import { imageLink } from "../models/imageLink";
-import { bookInfo } from "../models/getBook";
+import { FormValues, StorageLocation } from "../models/BookForm";
+import { GetBooks } from "../models/GetBooks";
+import { BookInfo } from "../models/getBook";
 
 const autoID = () => {
 	const S = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -92,7 +92,7 @@ export const setBook = async(values: FormValues) => {
 
 export const getStorageLocation = async() => {
 	const querySnapshot = await getDocs(collection(db, "storages"));
-	const data: storageLocation[] = [];
+	const data: StorageLocation[] = [];
 	querySnapshot.docs.map((doc) => {
 		data.push({
 			id: doc.id,
@@ -108,7 +108,7 @@ export const getStorageLocation = async() => {
 */
 
 export const getImageLink = async() => {
-	const images: imageLink[] = [];
+	const images: GetBooks[] = [];
 	const q = query(collection(db, "books"));
 	const querySnapshot = await getDocs(q);
 	querySnapshot.docs.map((doc) => {
@@ -121,7 +121,7 @@ export const getImageLink = async() => {
 }
 
 export const getBook = async(isbn: string) => {
-	const bookInfo: bookInfo[] = [];
+	const bookInfo: BookInfo[] = [];
 	const q = query(collection(db, "books"), where("isbn", "==", isbn));
 
 	const querySnapshot = await getDocs(q);

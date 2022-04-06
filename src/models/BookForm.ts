@@ -12,7 +12,7 @@ export type FormValues = {
   newStorageLocation: string;
 }
 
-export type storageLocation = {
+export type StorageLocation = {
   id: string;
   storageLocation: string;
 }

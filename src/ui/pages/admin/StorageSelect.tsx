@@ -4,14 +4,14 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { FormHelperText } from '@mui/material';
-import { storageLocation } from '../../../models/BookForm';
+import { StorageLocation } from '../../../models/BookForm';
 
 type Props = {
   fValue: string;
   fChange: (event: SelectChangeEvent<string>, child: React.ReactNode) => void;
   fError: boolean | undefined;
   fHelperText: string | false | undefined;
-  selectList: storageLocation[]
+  selectList: StorageLocation[]
 }
 
 const StorageSelect = (props: Props) => {

@@ -67,7 +67,11 @@ const Header = () => {
             onClick={()=> navigate("/user/profile/1")}
           />
           <Box sx={{mt: 5, mr:3}}>
-            <DefaultButton onClick={logOut} label={"SIGNOUT"} />  
+            <DefaultButton
+              type="button" 
+              onClick={logOut} 
+              label={"SIGNOUT"} 
+            />  
           </Box>
         </Box>
       </AppBar>

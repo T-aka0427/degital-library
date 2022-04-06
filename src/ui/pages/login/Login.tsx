@@ -19,7 +19,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../../firebase/firebase";
 import { AuthContext } from "../../../auth/AuthProvider";
 import { useLogin } from "../../../hooks/useLogin";
-import { loginSchema } from "./validationSchema";
+import { loginSchema } from "../../../validation/loginSchema";
 
 function Copyright(props: any) {
   return (
