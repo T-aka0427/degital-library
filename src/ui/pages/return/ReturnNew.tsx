@@ -1,14 +1,17 @@
-/* ログイン
-  google認証でログイン
-*/
-
 import React from "react";
+
+import { Container } from "@mui/material";
+import Header from "../../templates/Header";
+import Footer from "../../templates/Footer";
+import ReturnForm from "./ReturnForm";
 
 const ReturnNew = () => {
   return (
-    <>
-      <div>ReturnNew Page</div>
-    </>
+    <Container maxWidth="lg">
+      <Header />
+      <ReturnForm />
+      <Footer />
+    </Container>
   );
 };
 

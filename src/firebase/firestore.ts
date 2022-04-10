@@ -1,9 +1,11 @@
 import dayjs from "dayjs";
 import { db } from "../firebase/firebase";
-import { setDoc, collection, serverTimestamp, doc, runTransaction, query, where, getDocs, deleteDoc, getDoc, QuerySnapshot, DocumentData,DocumentReference } from "firebase/firestore";
+import { setDoc, collection, serverTimestamp, doc, runTransaction, query, where, getDocs, deleteDoc, getDoc, limit } from "firebase/firestore";
 import { FormValues, StorageLocation } from "../models/BookForm";
 import { GetBooks } from "../models/GetBooks";
-import { BookInfo } from "../models/getBook";
+import { BookInfo } from "../models/GetBook";
+import { LendingData, ExistStorageLocation } from "../models/Lending";
+import { UserGetBook } from "../models/UserGetBook";
 
 const autoID = () => {
 	const S = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -61,7 +63,8 @@ export const setBook = async(values: FormValues) => {
 					price: values.price,
 					versionNumber: values.versionNumber,
 					imageLink: values.imageLink,
-					storageLocation: doc(db, "storages", storageRef.id),
+					storageLocation: values.newStorageLocation,
+					lendingStatus: false,
 					createdAt: serverTimestamp(),
 					updatedAt: serverTimestamp(),
 				});
@@ -76,7 +79,8 @@ export const setBook = async(values: FormValues) => {
 					price: values.price,
 					versionNumber: values.versionNumber,
 					imageLink: values.imageLink,
-					storageLocation:doc(db, "storages", values.storageLocation),
+					storageLocation: values.storageLocation,
+					lendingStatus: false,
 					createdAt: serverTimestamp(),
 					updatedAt: serverTimestamp(),
 				});
@@ -104,7 +108,7 @@ export const getStorageLocation = async() => {
 }
 
 /*
-	image画像の取得
+	書籍情報の取得
 */
 
 export const getImageLink = async() => {
@@ -120,13 +124,11 @@ export const getImageLink = async() => {
 	return images;
 }
 
-export const getBook = async(isbn: string) => {
+export const getBook = async(isbn: string, mobileImage: string, pcImage: string) => {
 	const bookInfo: BookInfo[] = [];
-	const q = query(collection(db, "books"), where("isbn", "==", isbn));
+	const q = query(collection(db, "books"), where("isbn", "==", isbn), limit(1));
 
 	const querySnapshot = await getDocs(q);
-	const storageLocation = await getStorageData(querySnapshot);
-	//const storageLocation = await getStorageData(querySnapshot)
 	querySnapshot.docs.map((doc) => {
 		bookInfo.push({
 			isbn: doc.data().isbn,
@@ -135,36 +137,108 @@ export const getBook = async(isbn: string) => {
 			publisherName: doc.data().publisherName,
 			publicationDate: dayjs(doc.data().publicationDate.toDate()).format("YYYY年MM月DD日") as string,
 			versionNumber: doc.data().versionNumber,
-			imageLink: doc.data().imageLink.replace(/ex=200x200/, "ex=400x400"),
-			pcImageLink: doc.data().imageLink.replace(/ex=200x200/, "ex=500x500"),
-			storageLocation: storageLocation,
+			mobileImage: doc.data().imageLink.replace(/ex=200x200/, `ex=${mobileImage}x${mobileImage}`),
+			pcImage: doc.data().imageLink.replace(/ex=200x200/, `ex=${pcImage}x${pcImage}`),
+			storageLocation: doc.data().storageLocation,
 		})
 	});
 	return bookInfo[0];
 }
 
-//bookstorageLocation refを取得
-
-const getStorageData = async(querySnapshot: QuerySnapshot<DocumentData>) => {
-	const ref: DocumentReference<unknown>[] = [];
-	querySnapshot.docs.map((doc) => {
-		ref.push(doc.data().storageLocation);
-	})
-		const storageDoc = await getDoc(ref[0]);
-		type storage = {
-			storageLocation: string,
-		}
-		const castData = storageDoc.data() as storage
-		return castData.storageLocation;
-}
-
 export const checkLendingStatus = async(isbn: string) => {
-	const q = query(collection(db, "lending"), where("isbn", "==", isbn));
+	const q = query(collection(db, "books"), where("isbn", "==", isbn), where("lendingStatus", "==", false));
 	const querySnapshot = await getDocs(q);
-	console.log(querySnapshot.docs.length)
-	if(querySnapshot.docs.length === 0) {
+	if(querySnapshot.docs.length > 0) {
 		return true;
 	} else {
 		return false;
 	}
+}
+
+/*
+	貸出
+*/
+
+export const getExistStorageLocation = async(isbn: string) => {
+	const existStorageLocation: ExistStorageLocation[] = [];
+	const q = query(collection(db, "books"), where("isbn", "==", isbn), where("lendingStatus", "==", false));
+	const querySnapshot = await getDocs(q);
+	querySnapshot.docs.map((doc) => {
+		existStorageLocation.push({
+			bookId: doc.id,
+			storageLocation: doc.data().storageLocation
+		});
+	})
+	const filteredArray: ExistStorageLocation[] = existStorageLocation.filter((item, index, self) => {
+		const nameList = self.map(item => item.storageLocation);
+		if (nameList.indexOf(item.storageLocation) === index) {
+			return item;
+		}
+	})
+	return filteredArray;
+}
+
+export const borrow = async(data: LendingData) => {
+	try {
+		const q = query(collection(db, "lending"), where("isbn", "==", data.isbn));
+		const querySnapshot = await getDocs(q);
+		if(querySnapshot.docs.length > 0) {
+			throw new Error ("FireStoreError:既に貸出されています");
+		}
+
+		const lendingRef = doc(db, "lending", autoID());
+		const bookRef = doc(db, "books", data.bookId);
+		const bookDoc = await getDoc(bookRef);
+		const bookData = {
+			title: bookDoc.data()?.title,
+			author: bookDoc.data()?.author,
+			imageLink: bookDoc.data()?.imageLink,
+		}
+
+		await runTransaction(db, async (transaction) => {
+			transaction.set(lendingRef, {
+				uid: data.uid,
+				bookId: data.bookId,
+				isbn: data.isbn,
+				title: bookData.title,
+				author: bookData.author,
+				imageLink: bookData.imageLink,
+				checkoutDate: parseDate(data.checkoutDate),
+				returnDate: parseDate(data.returnDate),
+				storageLocation: data.storageLocation,
+				createdAt: serverTimestamp(),
+				updatedAt: serverTimestamp(),
+			});
+			transaction.update(bookRef, {lendingStatus: true})
+		})
+		return true;
+	} catch (e) {
+		console.error(e);
+	}
+}
+
+/*
+	user画面
+*/
+
+export const getUserBook = async(uid: string, mobileImage: string, pcImage: string) => {
+	const bookInfo: UserGetBook[] = [];
+	const q = query(collection(db, "lending"), where("uid", "==", uid));
+
+
+	const querySnapshot = await getDocs(q);
+	querySnapshot.docs.map((doc) => {
+		bookInfo.push({
+			isbn: doc.data().isbn,
+			title: doc.data().title,
+			author: doc.data().author,
+			mobileImage: doc.data().imageLink.replace(/ex=200x200/, `ex=${mobileImage}x${mobileImage}`),
+			pcImage: doc.data().imageLink.replace(/ex=200x200/, `ex=${pcImage}x${pcImage}`),
+			checkoutDate: dayjs(doc.data().checkoutDate.toDate()).format("YYYY年MM月DD日") as string,
+			returnDate: dayjs(doc.data().returnDate.toDate()).format("YYYY年MM月DD日") as string,
+			storageLocation: doc.data().storageLocation
+		})
+	});
+	console.log(bookInfo)
+	return bookInfo;
 }

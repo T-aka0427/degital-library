@@ -1,7 +1,3 @@
-/* Form
-  書籍情報の登録
-*/
-
 import React from "react";
 import { useFormik } from "formik";
 

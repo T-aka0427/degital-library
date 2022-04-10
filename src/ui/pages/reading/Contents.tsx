@@ -18,8 +18,6 @@ const Contents = () => {
   const theme = useTheme();
   const pcSize = useMediaQuery(theme.breakpoints.up('md'));
 
-  console.log(bookInfo.publicationDate);
-
   const infoElemetnt = (
     <>
       <Typography sx={{pl: 2, pt: 5}} variant='h6'>
@@ -37,9 +35,6 @@ const Contents = () => {
       <Typography sx={{pl: 3, pt: 2}}>
         版数：{bookInfo.versionNumber}
       </Typography>
-      <Typography sx={{pl: 3, pt: 2}}>
-        保管場所：{bookInfo.storageLocation}
-      </Typography>
       <Typography sx={{pl: 3, pt: 3}}>
         貸出状況：<Box component="span" sx={{color: status.color}}>{status.status}</Box>
       </Typography>
@@ -54,14 +49,14 @@ const Contents = () => {
         <Grid item md={6} sm={12}>
         {pcSize ? 
           <img 
-          src={bookInfo.pcImageLink} 
+          src={bookInfo.pcImage} 
           style={{
             boxShadow: "0 0 2px gray",
           }}
           />
         :
           <img 
-            src={bookInfo.imageLink} 
+            src={bookInfo.mobileImage} 
             style={{
               boxShadow: "0 0 2px gray",
             }}
@@ -75,7 +70,6 @@ const Contents = () => {
                 boxShadow: "0 0 5px gray",
                 width: 400,
                 bgcolor: "#FFF",
-                ml: 5,
                 mt: 3,
                 pb: 5
               }}>

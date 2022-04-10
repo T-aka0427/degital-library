@@ -27,7 +27,7 @@ const StorageSelect = (props: Props) => {
         value={props.fValue}
         onChange={props.fChange}
       >
-        {props.selectList.map((item, i) => <MenuItem key={i} value={item.id}>{item.storageLocation}</MenuItem>)}
+        {props.selectList.map((item) => <MenuItem key={item.id} value={item.storageLocation}>{item.storageLocation}</MenuItem>)}
         <MenuItem value={"new"}>保管場所を追加</MenuItem>
       </Select>
       <FormHelperText

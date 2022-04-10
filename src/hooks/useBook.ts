@@ -4,7 +4,6 @@ import axios from "axios";
 import { FormValues, StorageLocation } from "../models/BookForm";
 import { editDate, today } from "../ui/pages/admin/dateFormat";
 import { getStorageLocation } from "../firebase/firestore";
-import { color } from "@mui/system";
 
 export const useBook = () => {
   const [isbn, setIsbn] = useState("");
@@ -67,7 +66,7 @@ export const useBook = () => {
           versionNumber: 0,
           imageLink: item.largeImageUrl,
           storageLocation: "",
-          newStorageLocation: ""
+          newStorageLocation: "",
         });
         console.log(formData);
       });

@@ -64,7 +64,7 @@ const Header = () => {
               mr: 3,
               mt: 5
             }}
-            onClick={()=> navigate("/user/profile/1")}
+            onClick={()=> navigate(`/user/${currentUser}`)}
           />
           <Box sx={{mt: 5, mr:3}}>
             <DefaultButton

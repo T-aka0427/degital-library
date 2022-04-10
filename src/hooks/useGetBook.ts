@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from 'react-router-dom';
 
-import { BookInfo, Status } from "../models/getBook";
+import { BookInfo, Status } from "../models/GetBook";
 import { getBook, checkLendingStatus } from "../firebase/firestore";
 
 export const useGetBook = () => {
@@ -12,16 +12,16 @@ export const useGetBook = () => {
 		publisherName: "",
     publicationDate: "",
     versionNumber: 0,
-    imageLink: "",
-		pcImageLink: "",
-    storageLocation: "",
+    mobileImage: "",
+		pcImage: "",
+		storageLocation: "",
 	});
 	const [status, setStatus] = useState<Status>({
 		color: "",
 		status: "",
 	});
 
-  const {isbnId} = useParams();
+  const {isbn} = useParams();
 
 	useEffect(() => {
 		setTimeout(() => {
@@ -30,8 +30,8 @@ export const useGetBook = () => {
 	}, []);
 
 	const fetch = async() => {
-    if(typeof isbnId == "string") {
-			const data = await getBook(isbnId);
+    if(typeof isbn == "string") {
+			const data = await getBook(isbn, "400", "400");
 			setBookInfo(data);
 			const flag = await checkLendingStatus(await data.isbn);
 			if(flag) {

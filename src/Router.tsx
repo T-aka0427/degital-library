@@ -7,8 +7,7 @@ import Login from "./ui/pages/login/Login";
 import Show from "./ui/pages/reading/Show";
 import LendingNew from "./ui/pages/lending/LendingNew";
 import LendingShow from "./ui/pages/lending/LendingShow";
-import UserProfile from "./ui/pages/user/UserProfile";
-import UserLending from "./ui/pages/user/UserLending";
+import User from "./ui/pages/user/User";
 import ReturnNew from "./ui/pages/return/ReturnNew";
 import ReturnShow from "./ui/pages/return/ReturnShow";
 import NoMatch from "./ui/pages/NoMatch";
@@ -25,13 +24,12 @@ const App = () => {
           <Route path="/book" element={<Book />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/top" element={<Top />} />
-          <Route path="/show/:isbnId" element={<Show />} />
-          <Route path="/lending/new/:id/:isbnId" element={<LendingNew />} />
-          <Route path="/lending/show/:id/:isbnId" element={<LendingShow />} />
-          <Route path="/user/profile/:id" element={<UserProfile />} />
-          <Route path="/user/lending/:id" element={<UserLending />} />
-          <Route path="/return/new/:id/:isbnId" element={<ReturnNew />} />
-          <Route path="/return/show/:id/:isbnId" element={<ReturnShow />} />
+          <Route path="/show/:isbn" element={<Show />} />
+          <Route path="/lending/new/:uid/:isbn" element={<LendingNew />} />
+          <Route path="/lending/show/:uid/:isbn" element={<LendingShow />} />
+          <Route path="/user/:uid" element={<User />} />
+          <Route path="/return/new/:uid/:isbn" element={<ReturnNew />} />
+          <Route path="/return/show/:uid/:isbn" element={<ReturnShow />} />
           <Route path="*" element={<NoMatch />} />
         </Routes>
       </BrowserRouter>
