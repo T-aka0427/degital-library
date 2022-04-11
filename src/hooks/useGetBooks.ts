@@ -15,9 +15,7 @@ export const useGetBooks = () => {
 		const data = await getImageLink();
 
 		const result = data.filter((item, index, self) => {
-			// name だけをリスト化する
 			const nameList = self.map(item => item["imageLink"]);
-			// 重複を削除する
 			if (nameList.indexOf(item.imageLink) === index) {
 				return item;
 			}

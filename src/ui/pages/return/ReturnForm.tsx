@@ -1,5 +1,5 @@
-import React, {useContext} from 'react';
-
+import React from 'react';
+import { useParams } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 import { Container, Grid, Typography } from '@mui/material';
 import { Box } from '@mui/system';
@@ -8,33 +8,45 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 import PageTitle from '../../parts/PageTItle';
 import { useGetBook } from '../../../hooks/useGetBook';
-import { AuthContext } from "../../../auth/AuthProvider";
 import DefaultButton from '../../parts/DefaultButton';
-
+import { returnBook } from '../../../firebase/firestore';
 
 const ReturnForm = () => {
   
   const {bookInfo} = useGetBook();
-  const currentUser = useContext(AuthContext);
+  const {uid, isbn} = useParams();
   const navigate = useNavigate();
   const theme = useTheme();
   const pcSize = useMediaQuery(theme.breakpoints.up('md'));
 
+  const submit = async() => {
+    try {
+      if(typeof uid === "string" && isbn === "string") {
+        const flg = await returnBook(uid, isbn);
+        if(flg) {
+          navigate(`/return/show/${uid}/${isbn}`)
+        }
+      }
+    } catch (e) {
+      console.error("返却に失敗しました")
+    }
+  }
+
   const infoElemetnt = (
     <>
-      <Typography sx={{pl: 2, pt: 3, fontSize: 16}}>
+      <Typography sx={{pl: 2, pt: 3, fontSize: 15}}>
       {bookInfo.title}
       </Typography>
-      <Typography sx={{pl: 3, pt: 3, fontSize: 14}}>
+      <Typography sx={{pl: 3, pt: 2, fontSize: 14}}>
         著者：{bookInfo.author}
       </Typography>
-      <Typography sx={{pl: 3, pt: 2, fontSize: 14}}>
+      <Typography sx={{pl: 3, pt: 1, fontSize: 14}}>
         出版社：{bookInfo.publisherName}
       </Typography>
-      <Typography sx={{pl: 3, pt: 2, fontSize: 14}}>
+      <Typography sx={{pl: 3, pt: 1, fontSize: 14}}>
         出版日：{bookInfo.publicationDate}
       </Typography>
-      <Typography sx={{pl: 3, pt: 2, fontSize: 14}}>
+      <Typography sx={{pl: 3, pt: 1, fontSize: 14}}>
         版数：{bookInfo.versionNumber}
       </Typography>
     </>
@@ -56,6 +68,7 @@ const ReturnForm = () => {
               src={bookInfo.pcImage} 
               style={{
                 boxShadow: "0 0 2px gray",
+
               }}
               />
             :
@@ -75,14 +88,14 @@ const ReturnForm = () => {
                     width: 300,
                     bgcolor: "#FFF",
                     ml: 5,
-                    mt: 3,
+                    mt: 2,
                     pb: 3
                   }}>
                   {infoElemetnt}
                   <Box sx={{mt: 3, ml:15}}>
                     <DefaultButton
                       type="button" 
-                      onClick={() => {navigate(`/lending/new/${currentUser}/${bookInfo.isbn}`)}} 
+                      onClick={submit} 
                       label="返却"
                     />
                   </Box>
@@ -100,7 +113,7 @@ const ReturnForm = () => {
                   <Box sx={{mt: 5, ml:15}}>
                     <DefaultButton
                       type="submit"
-                      onClick={() => {navigate(`/lending/new/${currentUser}/${bookInfo.isbn}`)}} 
+                      onClick={submit} 
                       label="返却"
                     />
                   </Box>

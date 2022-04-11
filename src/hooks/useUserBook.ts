@@ -12,7 +12,7 @@ export const useUserBook = () => {
 	useEffect(() => {
 		setTimeout(() => {
 		fetch();
-		}, 500);
+		}, 200);
 	}, []);
 
 	const fetch = async() => {

@@ -20,22 +20,22 @@ const Contents = () => {
 
   const infoElemetnt = (
     <>
-      <Typography sx={{pl: 2, pt: 5}} variant='h6'>
+      <Typography sx={{pl: 2, pt: 3, fontSize: 15}}>
       {bookInfo.title}
       </Typography>
-      <Typography sx={{pl: 3, pt: 3}}>
+      <Typography sx={{pl: 3, pt: 2, fontSize: 14}}>
         著者：{bookInfo.author}
       </Typography>
-      <Typography sx={{pl: 3, pt: 2}}>
+      <Typography sx={{pl: 3, pt: 1, fontSize: 14}}>
         出版社：{bookInfo.publisherName}
       </Typography>
-      <Typography sx={{pl: 3, pt: 2}}>
+      <Typography sx={{pl: 3, pt: 1, fontSize: 14}}>
         出版日：{bookInfo.publicationDate}
       </Typography>
-      <Typography sx={{pl: 3, pt: 2}}>
+      <Typography sx={{pl: 3, pt: 1, fontSize: 14}}>
         版数：{bookInfo.versionNumber}
       </Typography>
-      <Typography sx={{pl: 3, pt: 3}}>
+      <Typography sx={{pl: 3, pt: 2, fontSize: 14}}>
         貸出状況：<Box component="span" sx={{color: status.color}}>{status.status}</Box>
       </Typography>
     </>
@@ -43,7 +43,7 @@ const Contents = () => {
   
   return (
     <Container 
-    maxWidth="md"
+    maxWidth="sm"
     >
 			<Grid container sx={{mt: 10, mb: 10}}>
         <Grid item md={6} sm={12}>
@@ -68,13 +68,12 @@ const Contents = () => {
             <Box
               sx={{
                 boxShadow: "0 0 5px gray",
-                width: 400,
+                width: 300,
                 bgcolor: "#FFF",
-                mt: 3,
-                pb: 5
+                pb: 3
               }}>
               {infoElemetnt}
-              <Box sx={{mt: 5, ml:18}}>
+              <Box sx={{mt: 3, ml:12}}>
                 <DefaultButton
                   type="button" 
                   onClick={() => {navigate(`/lending/new/${currentUser}/${bookInfo.isbn}`)}} 
@@ -86,13 +85,13 @@ const Contents = () => {
             <Box
               sx={{
                 boxShadow: "0 0 5px gray",
-                width: 350,
+                width: 300,
                 bgcolor: "#FFF",
                 mt: 5,
-                pb: 5
+                pb: 3
               }}>
               {infoElemetnt}
-              <Box sx={{mt: 5, ml:15}}>
+              <Box sx={{mt: 3, ml:12}}>
                 <DefaultButton
                   type="submit"
                   onClick={() => {navigate(`/lending/new/${currentUser}/${bookInfo.isbn}`)}} 

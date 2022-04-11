@@ -26,12 +26,12 @@ export const useGetBook = () => {
 	useEffect(() => {
 		setTimeout(() => {
 		fetch();
-		}, 500);
+		}, 200);
 	}, []);
 
 	const fetch = async() => {
     if(typeof isbn == "string") {
-			const data = await getBook(isbn, "400", "400");
+			const data = await getBook(isbn, "300", "300");
 			setBookInfo(data);
 			const flag = await checkLendingStatus(await data.isbn);
 			if(flag) {

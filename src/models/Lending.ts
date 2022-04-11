@@ -11,3 +11,12 @@ export type ExistStorageLocation = {
   bookId: string,
   storageLocation: string,
 }
+
+export type LendingInfo = {
+  title: string,
+  author: string,
+  checkoutDate: string,
+  returnDate: string,
+  imageLink: string,
+  storageLocation: string,
+}

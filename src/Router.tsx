@@ -26,10 +26,10 @@ const App = () => {
           <Route path="/top" element={<Top />} />
           <Route path="/show/:isbn" element={<Show />} />
           <Route path="/lending/new/:uid/:isbn" element={<LendingNew />} />
-          <Route path="/lending/show/:uid/:isbn" element={<LendingShow />} />
+          <Route path="/lending/show/:uid/:isbn/:bookId" element={<LendingShow />} />
           <Route path="/user/:uid" element={<User />} />
           <Route path="/return/new/:uid/:isbn" element={<ReturnNew />} />
-          <Route path="/return/show/:uid/:isbn" element={<ReturnShow />} />
+          <Route path="/return/show/:uid/:isbn/:bookId" element={<ReturnShow />} />
           <Route path="*" element={<NoMatch />} />
         </Routes>
       </BrowserRouter>

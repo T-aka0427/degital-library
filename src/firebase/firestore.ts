@@ -4,7 +4,7 @@ import { setDoc, collection, serverTimestamp, doc, runTransaction, query, where,
 import { FormValues, StorageLocation } from "../models/BookForm";
 import { GetBooks } from "../models/GetBooks";
 import { BookInfo } from "../models/GetBook";
-import { LendingData, ExistStorageLocation } from "../models/Lending";
+import { LendingData, ExistStorageLocation, LendingInfo } from "../models/Lending";
 import { UserGetBook } from "../models/UserGetBook";
 
 const autoID = () => {
@@ -215,6 +215,74 @@ export const borrow = async(data: LendingData) => {
 	} catch (e) {
 		console.error(e);
 	}
+}
+
+export const getLendingBook = async(bookId: string) => {
+	const q = query(collection(db, "lending"), where("bookId", "==", bookId));
+	const querySnapshot = await getDocs(q);
+	const bookData = querySnapshot.docs[0].data();
+	const LendingInfo: LendingInfo = {
+		title: bookData.title,
+		author: bookData.author,
+		checkoutDate: dayjs(bookData.checkoutDate.toDate()).format("YYYY年MM月DD日") as string,
+		returnDate: dayjs(bookData.returnDate.toDate()).format("YYYY年MM月DD日") as string,
+		imageLink: bookData.imageLink,
+		storageLocation: bookData.storageLocation,
+	}
+	return LendingInfo;
+}
+/*
+	返却
+*/
+
+export const returnBook = async(uid: string, isbn: string) => {
+	try {
+		const qLending = query(collection(db, "lending"), where("uid", "==", uid), where("isbn", "==", isbn));
+		const snapshotLending = await getDocs(qLending);
+		const lendingRef = snapshotLending.docs[0].ref;
+
+		const bookId = snapshotLending.docs[0].data().bookId
+		const qBook = query(collection(db, "books"), where("bookId", "==", bookId));
+		const snapshotBook = await getDocs(qBook);
+		const bookRef = snapshotBook.docs[0].ref;
+
+		const historyRef = doc(db, "user", uid, "history", bookId);
+		const lendingData = snapshotLending.docs[0].data()
+
+		await runTransaction(db, async (transaction) => {
+			transaction.update(bookRef, {lendingStatus: false})
+			transaction.set(historyRef, {
+				isbn: lendingData.isbn,
+				title: lendingData.title,
+				author: lendingData.author,
+				imageLink: lendingData.imageLink,
+				checkoutDate: lendingData.checkoutDate,
+				returnDate: lendingData.returnDate,
+				createdAt: serverTimestamp(),
+				updatedAt: serverTimestamp(),
+			});
+			transaction.delete(lendingRef);
+		})
+		return true;
+	} catch(e) {
+		console.error(e);
+	}
+
+}
+
+export const getReturnBook = async(bookId: string, uid: string) => {
+	const q = query(collection(db, "user", uid, "history"), where("bookId", "==", bookId));
+	const querySnapshot = await getDocs(q);
+	const bookData = querySnapshot.docs[0].data();
+	const LendingInfo: LendingInfo = {
+		title: bookData.title,
+		author: bookData.author,
+		checkoutDate: dayjs(bookData.checkoutDate.toDate()).format("YYYY年MM月DD日") as string,
+		returnDate: dayjs(bookData.returnDate.toDate()).format("YYYY年MM月DD日") as string,
+		imageLink: bookData.imageLink,
+		storageLocation: bookData.storageLocation,
+	}
+	return LendingInfo;
 }
 
 /*

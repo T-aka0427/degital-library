@@ -54,7 +54,7 @@ const LendingForm = () => {
           }
           const flg = await borrow(data);
           if (flg) {
-            navigate(`/lending/show/${uid}/${isbn}`);
+            navigate(`/lending/show/${uid}/${isbn}/${getBookId(formik.values.storageLocation)}`);
           }
         } else {
           throw new Error("貸出手続きに失敗しました")

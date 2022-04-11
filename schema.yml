@@ -1,9 +1,19 @@
 users:
   uid: {
-  userName: string,
-  adminFlag: boolean,
-  createdAt: timestamp,
-  updatedAt: timestamp
+    userName: string,
+    adminFlag: boolean,
+    createdAt: timestamp,
+    updatedAt: timestamp,
+    history: {
+      isbn: string,
+      title: string,
+      author: string,
+      imageLink: string,
+      checkoutDate: date,
+      returnDate: date,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    }
   }
 
 books:
@@ -22,11 +32,6 @@ books:
     updatedAt: timestamp
   }
 
-storages:
-  storageId: {
-    storageLocation: string
-  }
-
 lending: {
   id: {
     uid: string,
@@ -40,20 +45,5 @@ lending: {
     storageLocation: string,
     createdAt: timestamp,
     updatedAt: timestamp
-  }
-}
-
-history: {
-  id: {
-    uid: string,
-    bookId: string,
-    isbn: string,
-    title: string,
-    author: string,
-    imageLink: string,
-    checkoutDate: date,
-    returnDate: date,
-    createdAt: timestamp,
-    updatedAt: timestamp,
   }
 }

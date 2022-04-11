@@ -26,18 +26,20 @@ service cloud.firestore {
     match /users/{uid} {
       allow read: if isAuthenticated() && isUserAuthenticated(uid);
       allow write: if isAuthenticated();
+      match /history/{bookId} {
+        allow read, write: if isAuthenticated() && userExists();
+      }
     }
+
     match /books/{bookId} {
-      allow read: if isAuthenticated();
-      allow write: if isAdmin();
-    }
-    match /storages/{storageId} {
-      allow read: if isAuthenticated();
-      allow write: if isAdmin();
-    }
-    match /lending/{lendingId} {
       allow read: if isAuthenticated() && userExists();
-      allow write: if isAuthenticated() && userExists();
+      allow create: if isAdmin();
+      allow update: if isAuthenticated() && userExists();
+      allow delete: if isAdmin();
+    }
+
+    match /lending/{lendingId} {
+      allow read, write: if isAuthenticated() && userExists();
     }
   }
 }
