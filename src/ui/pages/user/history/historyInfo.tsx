@@ -19,6 +19,9 @@ const HistoryInfo = (props: UserLendingInfo) => {
     <Typography sx={{pl: 3, pt: 1, fontSize: 14}}>
       返却日：{props.returnDate}
     </Typography>
+    <Typography sx={{pl: 3, pt: 1, fontSize: 14}}>
+      返却場所：{props.storageLocation}
+    </Typography>
   </>
   )
 }

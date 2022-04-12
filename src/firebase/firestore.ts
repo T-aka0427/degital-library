@@ -1,11 +1,12 @@
 import dayjs from "dayjs";
 import { db } from "../firebase/firebase";
-import { setDoc, collection, serverTimestamp, doc, runTransaction, query, where, getDocs, deleteDoc, getDoc, limit, collectionGroup } from "firebase/firestore";
+import { setDoc, collection, serverTimestamp, doc, runTransaction, query, where, getDocs, deleteDoc, getDoc, limit } from "firebase/firestore";
 import { FormValues, StorageLocation } from "../models/BookForm";
 import { GetBooks } from "../models/GetBooks";
 import { BookInfo } from "../models/GetBook";
 import { LendingData, ExistStorageLocation, LendingInfo } from "../models/Lending";
 import { UserGetBook } from "../models/UserGetBook";
+import { HistoryBook } from "../models/UserHistory";
 
 const autoID = () => {
 	const S = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -124,7 +125,7 @@ export const getImageLink = async() => {
 	return images;
 }
 
-export const getBook = async(isbn: string, mobileImage: string, pcImage: string) => {
+export const getBook = async(isbn: string) => {
 	const bookInfo: BookInfo[] = [];
 	const q = query(collection(db, "books"), where("isbn", "==", isbn), limit(1));
 
@@ -137,8 +138,7 @@ export const getBook = async(isbn: string, mobileImage: string, pcImage: string)
 			publisherName: doc.data().publisherName,
 			publicationDate: dayjs(doc.data().publicationDate.toDate()).format("YYYY年MM月DD日") as string,
 			versionNumber: doc.data().versionNumber,
-			mobileImage: doc.data().imageLink.replace(/ex=200x200/, `ex=${mobileImage}x${mobileImage}`),
-			pcImage: doc.data().imageLink.replace(/ex=200x200/, `ex=${pcImage}x${pcImage}`),
+			imageLink: doc.data().imageLink.replace(/ex=200x200/, `ex=300x300`),
 			storageLocation: doc.data().storageLocation,
 		})
 	});
@@ -244,12 +244,13 @@ export const returnBook = async(uid: string, isbn: string) => {
 		const bookId = snapshotLending.docs[0].data().bookId as string;
 		const bookRef = doc(db, "books", bookId);
 
-		const historyRef = doc(db, "users", uid, "history", bookId);
+		const historyRef = doc(db, "users", uid, "history", autoID());
 		const lendingData = snapshotLending.docs[0].data()
 
 		await runTransaction(db, async (transaction) => {
 			transaction.update(bookRef, {lendingStatus: false})
 			transaction.set(historyRef, {
+				bookId: bookId,
 				isbn: lendingData.isbn,
 				title: lendingData.title,
 				author: lendingData.author,
@@ -270,28 +271,27 @@ export const returnBook = async(uid: string, isbn: string) => {
 }
 
 export const getReturnBook = async(bookId: string, uid: string) => {
-	const bookDoc = doc(db, "users", uid, "history", bookId);
-	const snapshot = await getDoc(bookDoc);
-	if (snapshot.exists()) {
-		const LendingInfo: LendingInfo = {
-			title: snapshot.data().title,
-			author: snapshot.data().author,
-			checkoutDate: dayjs(snapshot.data().checkoutDate.toDate()).format("YYYY年MM月DD日") as string,
-			returnDate: dayjs(snapshot.data().returnDate.toDate()).format("YYYY年MM月DD日") as string,
-			imageLink: snapshot.data().imageLink,
-			storageLocation: snapshot.data().storageLocation,
-		}
-		return LendingInfo;
+	const q = query(collection(db, "users", uid, "history"), where("bookId", "==", bookId));
+	const querySnapshot = await getDocs(q);
+	const bookData = querySnapshot.docs[0].data();
+	const returnInfo: HistoryBook = {
+		bookId: bookData.bookId,
+		title: bookData.title,
+		author: bookData.author,
+		checkoutDate: dayjs(bookData.checkoutDate.toDate()).format("YYYY年MM月DD日") as string,
+		returnDate: dayjs(bookData.returnDate.toDate()).format("YYYY年MM月DD日") as string,
+		imageLink: bookData.imageLink,
+		storageLocation: bookData.storageLocation,
 	}
+	return returnInfo;
 }
 
 /*
 	ユーザー画面
 */
-export const getUserBook = async(uid: string, mobileImage: string, pcImage: string) => {
+export const getUserBook = async(uid: string) => {
 	const bookInfo: UserGetBook[] = [];
 	const q = query(collection(db, "lending"), where("uid", "==", uid));
-
 
 	const querySnapshot = await getDocs(q);
 	querySnapshot.docs.map((doc) => {
@@ -300,8 +300,7 @@ export const getUserBook = async(uid: string, mobileImage: string, pcImage: stri
 			isbn: doc.data().isbn,
 			title: doc.data().title,
 			author: doc.data().author,
-			mobileImage: doc.data().imageLink.replace(/ex=200x200/, `ex=${mobileImage}x${mobileImage}`),
-			pcImage: doc.data().imageLink.replace(/ex=200x200/, `ex=${pcImage}x${pcImage}`),
+			imageLink: doc.data().imageLink.replace(/ex=200x200/, `ex=300x300`),
 			checkoutDate: dayjs(doc.data().checkoutDate.toDate()).format("YYYY年MM月DD日") as string,
 			returnDate: dayjs(doc.data().returnDate.toDate()).format("YYYY年MM月DD日") as string,
 			storageLocation: doc.data().storageLocation
@@ -312,5 +311,20 @@ export const getUserBook = async(uid: string, mobileImage: string, pcImage: stri
 }
 
 export const getHistoryBook = async(uid: string) => {
-	console.log("history")
+	const bookInfo: HistoryBook[] = [];
+	const q = query(collection(db, "users", uid, "history"));
+	const querySnapshot = await getDocs(q);
+	querySnapshot.docs.map((doc) => {
+		bookInfo.push({
+			bookId: doc.data().bookId,
+			title: doc.data().title,
+			author: doc.data().author,
+			checkoutDate: dayjs(doc.data().checkoutDate.toDate()).format("YYYY年MM月DD日") as string,
+			returnDate: dayjs(doc.data().returnDate.toDate()).format("YYYY年MM月DD日") as string,
+			imageLink: doc.data().imageLink.replace(/ex=200x200/, `ex=300x300`),
+			storageLocation: doc.data().storageLocation,
+		})
+	})
+	console.log(bookInfo)
+	return bookInfo;
 }

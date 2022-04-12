@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Container, Grid } from '@mui/material';
 import { Box } from '@mui/system';
 import { useTheme } from '@mui/material/styles';
@@ -24,21 +24,12 @@ const Lending = () => {
       {bookInfo.map((item) =>
 			<Grid container key={item.isbn} sx={{mt: 7, mb: 7}}>
         <Grid item md={6} sm={12}>
-        {pcSize ? 
           <img 
-          src={item.pcImage} 
+          src={item.imageLink} 
           style={{
             boxShadow: "0 0 2px gray",
           }}
           />
-        :
-          <img 
-            src={item.mobileImage} 
-            style={{
-              boxShadow: "0 0 2px gray",
-            }}
-          />
-       }
         </Grid>
         <Grid item md={6} sm={12}>
           {pcSize ?

@@ -3,8 +3,7 @@ export type UserGetBook = {
   isbn: string;
   title: string;
   author: string;
-  mobileImage: string;
-  pcImage: string;
+  imageLink: string;
   checkoutDate: string;
   returnDate: string;
   storageLocation: string;

@@ -5,8 +5,7 @@ export type BookInfo = {
     publisherName: string;
     publicationDate: string;
     versionNumber: number;
-    mobileImage: string;
-    pcImage: string;
+    imageLink: string;
     storageLocation: string;
   }
 

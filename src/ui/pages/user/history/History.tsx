@@ -10,7 +10,7 @@ import HistoryInfo from './historyInfo';
   
 const History = () => {
   
-  const {bookInfo} = useUserBook();
+  const {history} = useUserBook();
   const theme = useTheme();
   const pcSize = useMediaQuery(theme.breakpoints.up('md'));
   
@@ -18,24 +18,15 @@ const History = () => {
     <Container 
     maxWidth="sm"
     >
-      {bookInfo.map((item) =>
-      <Grid container key={item.isbn} sx={{mt: 7, mb: 7}}>
+      {history.map((item) =>
+      <Grid container key={item.bookId} sx={{mt: 7, mb: 7}}>
         <Grid item md={6} sm={12}>
-        {pcSize ? 
           <img 
-          src={item.pcImage} 
+          src={item.imageLink} 
           style={{
             boxShadow: "0 0 2px gray",
           }}
           />
-        :
-          <img 
-            src={item.mobileImage} 
-            style={{
-              boxShadow: "0 0 2px gray",
-            }}
-          />
-        }
         </Grid>
         <Grid item md={6} sm={12}>
           {pcSize ?

@@ -12,8 +12,7 @@ export const useGetBook = () => {
 		publisherName: "",
     publicationDate: "",
     versionNumber: 0,
-    mobileImage: "",
-		pcImage: "",
+    imageLink: "",
 		storageLocation: "",
 	});
 	const [status, setStatus] = useState<Status>({
@@ -31,7 +30,7 @@ export const useGetBook = () => {
 
 	const fetch = async() => {
     if(typeof isbn == "string") {
-			const data = await getBook(isbn, "300", "300");
+			const data = await getBook(isbn);
 			setBookInfo(data);
 			const flag = await checkLendingStatus(await data.isbn);
 			if(flag) {

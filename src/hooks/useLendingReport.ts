@@ -32,7 +32,7 @@ export const useLendingReport = (arg: string) => {
       if(arg === "return") {
         const data = await getReturnBook(bookId, uid);
         console.log(data)
-        setReportInfo(data as LendingInfo);
+        setReportInfo(data);
       }
     }
 	}

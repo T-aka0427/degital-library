@@ -1,13 +1,12 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
-import { Container, Grid, Typography } from '@mui/material';
+import { Container, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import PageTitle from '../../parts/PageTItle';
-import { useGetBook } from '../../../hooks/useGetBook';
 import DefaultButton from '../../parts/DefaultButton';
 import { returnBook } from '../../../firebase/firestore';
 import { useLendingReport } from '../../../hooks/useLendingReport';

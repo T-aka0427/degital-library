@@ -18,7 +18,7 @@ import DefaultButton from "../../parts/DefaultButton";
 import SubmitButton from "../../parts/SubmitButton";
 
 const BookForm = () => {
-  const { scan, onChangeIsbn, formData, loading, error, selectList, submitSuccess, submitFail, submit } = useBook();
+  const { scan, onChangeIsbn, formData, error, selectList, submitSuccess, submitFail, submit } = useBook();
   console.log(error);
 
   const formik = useFormik({

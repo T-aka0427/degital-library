@@ -2,6 +2,7 @@ import React, {useContext} from 'react';
 import { useNavigate } from "react-router-dom";
 import { Container, Grid, Typography } from '@mui/material';
 import { Box } from '@mui/system';
+import { Button } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
@@ -47,21 +48,12 @@ const Contents = () => {
     >
 			<Grid container sx={{mt: 10, mb: 10}}>
         <Grid item md={6} sm={12}>
-        {pcSize ? 
           <img 
-          src={bookInfo.pcImage} 
+          src={bookInfo.imageLink} 
           style={{
             boxShadow: "0 0 2px gray",
           }}
           />
-        :
-          <img 
-            src={bookInfo.mobileImage} 
-            style={{
-              boxShadow: "0 0 2px gray",
-            }}
-          />
-       }
         </Grid>
         <Grid item md={6} sm={12}>
           {pcSize ?
@@ -73,13 +65,27 @@ const Contents = () => {
                 pb: 3
               }}>
               {infoElemetnt}
-              <Box sx={{mt: 3, ml:12}}>
-                <DefaultButton
-                  type="button" 
-                  onClick={() => {navigate(`/lending/new/${currentUser}/${bookInfo.isbn}`)}} 
-                  label="本を借りる"
-                />
-              </Box>
+              {status.status === "貸出可" ?
+                <Box sx={{mt: 3, ml:12}}>
+                  <DefaultButton
+                    type="submit"
+                    onClick={() => {navigate(`/lending/new/${currentUser}/${bookInfo.isbn}`)}} 
+                    label="本を借りる"
+                  />
+                </Box>
+              :
+                <Box sx={{mt: 3, ml:12}}>
+                  <Button
+                    type="button"
+                    disabled
+                    variant="contained"
+                  >
+                    <Box sx={{color: '#FFF'}}>
+                      本を借りる
+                    </Box>
+                  </Button>
+                </Box> 
+              }
             </Box>
           :
             <Box
@@ -91,13 +97,27 @@ const Contents = () => {
                 pb: 3
               }}>
               {infoElemetnt}
-              <Box sx={{mt: 3, ml:12}}>
-                <DefaultButton
-                  type="submit"
-                  onClick={() => {navigate(`/lending/new/${currentUser}/${bookInfo.isbn}`)}} 
-                  label="本を借りる"
-                />
-              </Box>
+              {status.status === "貸出可" ?
+                <Box sx={{mt: 3, ml:12}}>
+                  <DefaultButton
+                    type="submit"
+                    onClick={() => {navigate(`/lending/new/${currentUser}/${bookInfo.isbn}`)}} 
+                    label="本を借りる"
+                  />
+                </Box>
+              :
+                <Box sx={{mt: 3, ml:12}}>
+                  <Button
+                    type="button"
+                    disabled
+                    variant="contained"
+                  >
+                    <Box sx={{color: '#FFF'}}>
+                      本を借りる
+                    </Box>
+                  </Button> 
+                </Box>
+              }
             </Box>
           }
         </Grid>

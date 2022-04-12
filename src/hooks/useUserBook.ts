@@ -2,11 +2,12 @@ import { useState, useEffect } from "react";
 import { useParams } from 'react-router-dom';
 
 import { getUserBook, getHistoryBook } from "../firebase/firestore";
-import { UserGetBook, UserLendingInfo } from "../models/UserGetBook";
+import { UserGetBook } from "../models/UserGetBook";
+import { HistoryBook } from "../models/UserHistory"
 
 export const useUserBook = () => {
 	const [bookInfo, setBookInfo] = useState<UserGetBook[]>([]);
-  const [history, setHistory ] = useState<UserLendingInfo[]>([]);
+  const [history, setHistory ] = useState<HistoryBook[]>([]);
 
   const {uid} = useParams();
 
@@ -18,11 +19,12 @@ export const useUserBook = () => {
 
 	const fetch = async() => {
     if(typeof uid == "string") {
-			const lendingData = await getUserBook(uid, "300", "300");
+			const lendingData = await getUserBook(uid);
       const historyData = await getHistoryBook(uid);
-			//setBookInfo(lendingData);
+			setBookInfo(lendingData);
+      setHistory(historyData);
     }
 	}
 
-	return { bookInfo, uid };
+	return { bookInfo, uid, history };
 };
