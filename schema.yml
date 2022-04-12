@@ -5,12 +5,14 @@ users:
     createdAt: timestamp,
     updatedAt: timestamp,
     history: {
+      bookId: string,
       isbn: string,
       title: string,
       author: string,
       imageLink: string,
       checkoutDate: date,
       returnDate: date,
+      storageLocation: string,
       createdAt: timestamp,
       updatedAt: timestamp,
     }

@@ -3,9 +3,9 @@ import Button from "@mui/material/Button";
 import { Box } from '@mui/system';
 
 type Props = {
-	onClick: () => void,
-	label: string,
-	type: "button" | "submit" | "reset" | undefined
+	onClick: () => void;
+	label: string;
+	type: "button" | "submit" | "reset" | undefined;
 }
 const DefaultButton = (props: Props) => {
   return (

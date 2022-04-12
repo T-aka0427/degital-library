@@ -12,7 +12,7 @@ import Footer from "../../templates/Footer";
 import { useUserTabs } from "../../../hooks/useUserTabs";
 import Booking from "./Booking";
 import Lending from "./lending/Lending";
-import History from "./History";
+import History from "./history/History";
 import Setting from "./Setting";
 
 

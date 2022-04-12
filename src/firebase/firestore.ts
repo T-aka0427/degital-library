@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { db } from "../firebase/firebase";
-import { setDoc, collection, serverTimestamp, doc, runTransaction, query, where, getDocs, deleteDoc, getDoc, limit } from "firebase/firestore";
+import { setDoc, collection, serverTimestamp, doc, runTransaction, query, where, getDocs, deleteDoc, getDoc, limit, collectionGroup } from "firebase/firestore";
 import { FormValues, StorageLocation } from "../models/BookForm";
 import { GetBooks } from "../models/GetBooks";
 import { BookInfo } from "../models/GetBook";
@@ -241,12 +241,10 @@ export const returnBook = async(uid: string, isbn: string) => {
 		const snapshotLending = await getDocs(qLending);
 		const lendingRef = snapshotLending.docs[0].ref;
 
-		const bookId = snapshotLending.docs[0].data().bookId
-		const qBook = query(collection(db, "books"), where("bookId", "==", bookId));
-		const snapshotBook = await getDocs(qBook);
-		const bookRef = snapshotBook.docs[0].ref;
+		const bookId = snapshotLending.docs[0].data().bookId as string;
+		const bookRef = doc(db, "books", bookId);
 
-		const historyRef = doc(db, "user", uid, "history", bookId);
+		const historyRef = doc(db, "users", uid, "history", bookId);
 		const lendingData = snapshotLending.docs[0].data()
 
 		await runTransaction(db, async (transaction) => {
@@ -258,6 +256,7 @@ export const returnBook = async(uid: string, isbn: string) => {
 				imageLink: lendingData.imageLink,
 				checkoutDate: lendingData.checkoutDate,
 				returnDate: lendingData.returnDate,
+				storageLocation: lendingData.storageLocation,
 				createdAt: serverTimestamp(),
 				updatedAt: serverTimestamp(),
 			});
@@ -271,24 +270,24 @@ export const returnBook = async(uid: string, isbn: string) => {
 }
 
 export const getReturnBook = async(bookId: string, uid: string) => {
-	const q = query(collection(db, "user", uid, "history"), where("bookId", "==", bookId));
-	const querySnapshot = await getDocs(q);
-	const bookData = querySnapshot.docs[0].data();
-	const LendingInfo: LendingInfo = {
-		title: bookData.title,
-		author: bookData.author,
-		checkoutDate: dayjs(bookData.checkoutDate.toDate()).format("YYYY年MM月DD日") as string,
-		returnDate: dayjs(bookData.returnDate.toDate()).format("YYYY年MM月DD日") as string,
-		imageLink: bookData.imageLink,
-		storageLocation: bookData.storageLocation,
+	const bookDoc = doc(db, "users", uid, "history", bookId);
+	const snapshot = await getDoc(bookDoc);
+	if (snapshot.exists()) {
+		const LendingInfo: LendingInfo = {
+			title: snapshot.data().title,
+			author: snapshot.data().author,
+			checkoutDate: dayjs(snapshot.data().checkoutDate.toDate()).format("YYYY年MM月DD日") as string,
+			returnDate: dayjs(snapshot.data().returnDate.toDate()).format("YYYY年MM月DD日") as string,
+			imageLink: snapshot.data().imageLink,
+			storageLocation: snapshot.data().storageLocation,
+		}
+		return LendingInfo;
 	}
-	return LendingInfo;
 }
 
 /*
-	user画面
+	ユーザー画面
 */
-
 export const getUserBook = async(uid: string, mobileImage: string, pcImage: string) => {
 	const bookInfo: UserGetBook[] = [];
 	const q = query(collection(db, "lending"), where("uid", "==", uid));
@@ -297,6 +296,7 @@ export const getUserBook = async(uid: string, mobileImage: string, pcImage: stri
 	const querySnapshot = await getDocs(q);
 	querySnapshot.docs.map((doc) => {
 		bookInfo.push({
+			bookId: doc.data().bookId,
 			isbn: doc.data().isbn,
 			title: doc.data().title,
 			author: doc.data().author,
@@ -309,4 +309,8 @@ export const getUserBook = async(uid: string, mobileImage: string, pcImage: stri
 	});
 	console.log(bookInfo)
 	return bookInfo;
+}
+
+export const getHistoryBook = async(uid: string) => {
+	console.log("history")
 }

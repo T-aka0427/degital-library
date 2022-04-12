@@ -28,7 +28,7 @@ const App = () => {
           <Route path="/lending/new/:uid/:isbn" element={<LendingNew />} />
           <Route path="/lending/show/:uid/:isbn/:bookId" element={<LendingShow />} />
           <Route path="/user/:uid" element={<User />} />
-          <Route path="/return/new/:uid/:isbn" element={<ReturnNew />} />
+          <Route path="/return/new/:uid/:isbn/:bookId" element={<ReturnNew />} />
           <Route path="/return/show/:uid/:isbn/:bookId" element={<ReturnShow />} />
           <Route path="*" element={<NoMatch />} />
         </Routes>

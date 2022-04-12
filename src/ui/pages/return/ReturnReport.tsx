@@ -37,10 +37,10 @@ const ReturnReport = () => {
           sx={{
             boxShadow: "0 0 5px gray",
             width: 300,
-            height: 250,
+            height: 200,
             bgcolor: "#FFF",
             ml: 2,
-            pb: 5,
+            pb: 3,
             pl: 3
           }}
         >

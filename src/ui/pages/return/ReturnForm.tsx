@@ -10,21 +10,22 @@ import PageTitle from '../../parts/PageTItle';
 import { useGetBook } from '../../../hooks/useGetBook';
 import DefaultButton from '../../parts/DefaultButton';
 import { returnBook } from '../../../firebase/firestore';
+import { useLendingReport } from '../../../hooks/useLendingReport';
 
 const ReturnForm = () => {
   
-  const {bookInfo} = useGetBook();
-  const {uid, isbn} = useParams();
+  const bookInfo = useLendingReport("lending");
+  const {uid, isbn, bookId} = useParams();
   const navigate = useNavigate();
   const theme = useTheme();
   const pcSize = useMediaQuery(theme.breakpoints.up('md'));
 
   const submit = async() => {
     try {
-      if(typeof uid === "string" && isbn === "string") {
+      if(typeof uid === "string" && typeof isbn === "string" && typeof bookId === "string") {
         const flg = await returnBook(uid, isbn);
         if(flg) {
-          navigate(`/return/show/${uid}/${isbn}`)
+          navigate(`/return/show/${uid}/${isbn}/${bookId}`)
         }
       }
     } catch (e) {
@@ -41,13 +42,16 @@ const ReturnForm = () => {
         著者：{bookInfo.author}
       </Typography>
       <Typography sx={{pl: 3, pt: 1, fontSize: 14}}>
-        出版社：{bookInfo.publisherName}
+        貸出日：{bookInfo.checkoutDate}
       </Typography>
       <Typography sx={{pl: 3, pt: 1, fontSize: 14}}>
-        出版日：{bookInfo.publicationDate}
+        返却日：{bookInfo.returnDate}
       </Typography>
       <Typography sx={{pl: 3, pt: 1, fontSize: 14}}>
-        版数：{bookInfo.versionNumber}
+        保管場所：{bookInfo.storageLocation}
+      </Typography>
+      <Typography sx={{pl: 3, pt: 1, fontSize: 13, color: "#d32f2f"}}>
+        ※必ず元の保管場所に返却してください
       </Typography>
     </>
   )
@@ -61,66 +65,52 @@ const ReturnForm = () => {
         <Container 
           maxWidth="sm"
         >
-          <Grid container sx={{mt: 5, mb: 5}}>
-            <Grid item md={6} sm={12}>
-            {pcSize ? 
-              <img 
-              src={bookInfo.pcImage} 
-              style={{
-                boxShadow: "0 0 2px gray",
-
-              }}
-              />
+          <Box sx={{
+            justifyContent: "center", 
+            display: "flex",
+            mt: 5,
+            mb: 5
+            }}
+          >
+            {pcSize ?
+              <Box
+                sx={{
+                  boxShadow: "0 0 5px gray",
+                  width: 300,
+                  bgcolor: "#FFF",
+                  ml: 5,
+                  mt: 2,
+                  pb: 3
+                }}>
+                {infoElemetnt}
+                <Box sx={{mt: 3, ml:15}}>
+                  <DefaultButton
+                    type="button" 
+                    onClick={submit} 
+                    label="返却"
+                  />
+                </Box>
+              </Box>
             :
-              <img 
-                src={bookInfo.mobileImage} 
-                style={{
-                  boxShadow: "0 0 2px gray",
-                }}
-              />
-          }
-            </Grid>
-            <Grid item md={6} sm={12}>
-              {pcSize ?
-                <Box
-                  sx={{
-                    boxShadow: "0 0 5px gray",
-                    width: 300,
-                    bgcolor: "#FFF",
-                    ml: 5,
-                    mt: 2,
-                    pb: 3
-                  }}>
-                  {infoElemetnt}
-                  <Box sx={{mt: 3, ml:15}}>
-                    <DefaultButton
-                      type="button" 
-                      onClick={submit} 
-                      label="返却"
-                    />
-                  </Box>
+              <Box
+                sx={{
+                  boxShadow: "0 0 5px gray",
+                  width: 300,
+                  bgcolor: "#FFF",
+                  mt: 5,
+                  pb: 5
+                }}>
+                {infoElemetnt}
+                <Box sx={{mt: 5, ml:15}}>
+                  <DefaultButton
+                    type="button"
+                    onClick={submit} 
+                    label="返却"
+                  />
                 </Box>
-              :
-                <Box
-                  sx={{
-                    boxShadow: "0 0 5px gray",
-                    width: 300,
-                    bgcolor: "#FFF",
-                    mt: 5,
-                    pb: 5
-                  }}>
-                  {infoElemetnt}
-                  <Box sx={{mt: 5, ml:15}}>
-                    <DefaultButton
-                      type="submit"
-                      onClick={submit} 
-                      label="返却"
-                    />
-                  </Box>
-                </Box>
-              }
-            </Grid>
-          </Grid>
+              </Box>
+            }
+          </Box>
         </Container>
       </Box>
     </>

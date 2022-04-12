@@ -1,5 +1,6 @@
 export type UserGetBook = {
-  isbn: string,
+  bookId: string;
+  isbn: string;
   title: string;
   author: string;
   mobileImage: string;

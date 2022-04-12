@@ -3,7 +3,7 @@ import Button from "@mui/material/Button";
 import { Box } from '@mui/system';
 
 type Props = {
-	label: string,
+	label: string;
 }
 const SubmitButton = (props: Props) => {
   return (
