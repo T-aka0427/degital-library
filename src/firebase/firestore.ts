@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import { db } from "../firebase/firebase";
 import { setDoc, collection, serverTimestamp, doc, runTransaction, query, where, getDocs, deleteDoc, getDoc, limit } from "firebase/firestore";
-import { FormValues, StorageLocation } from "../models/BookForm";
+import { FormValues, StorageLocation } from "../models/admin/BookForm";
 import { GetBooks } from "../models/GetBooks";
 import { BookInfo } from "../models/GetBook";
 import { LendingData, ExistStorageLocation, LendingInfo } from "../models/Lending";
@@ -36,76 +36,6 @@ export const setUser = (uid: string, name: string) => {
 		createdAt: serverTimestamp(),
 		updatedAt: serverTimestamp(),
 	});
-}
-
-/*
-	本の登録
-*/
-
-
-export const setBook = async(values: FormValues) => {
-
-	const bookRef = doc(db, "books", autoID());
-	const storageRef = doc(db, "storages", autoID());
-
-	try {
-		await runTransaction(db, async (transaction) => {
-			if (values.storageLocation === "new") {
-				transaction.set(storageRef, {
-					storageLocation: values.newStorageLocation,
-				});
-				transaction.set(bookRef, {
-					isbn: values.isbn,
-					title: values.title,
-					author: values.author,
-					publisherName: values.publisherName,
-					publicationDate: parseDate(values.publicationDate),
-					purchaseDate: parseDate(values.purchaseDate),
-					price: values.price,
-					versionNumber: values.versionNumber,
-					imageLink: values.imageLink,
-					storageLocation: values.newStorageLocation,
-					lendingStatus: false,
-					createdAt: serverTimestamp(),
-					updatedAt: serverTimestamp(),
-				});
-			} else {
-				transaction.set(bookRef, {
-					isbn: values.isbn,
-					title: values.title,
-					author: values.author,
-					publisherName: values.publisherName,
-					publicationDate: parseDate(values.publicationDate),
-					purchaseDate: parseDate(values.purchaseDate),
-					price: values.price,
-					versionNumber: values.versionNumber,
-					imageLink: values.imageLink,
-					storageLocation: values.storageLocation,
-					lendingStatus: false,
-					createdAt: serverTimestamp(),
-					updatedAt: serverTimestamp(),
-				});
-			}
-		})
-	} catch(e) {
-		console.log(e + "登録に失敗しました");
-		if (values.newStorageLocation === "new") {
-			await deleteDoc(doc(db, "storages", values.storageLocation));
-		}
-	}
-}
-
-export const getStorageLocation = async() => {
-	const querySnapshot = await getDocs(collection(db, "storages"));
-	const data: StorageLocation[] = [];
-	querySnapshot.docs.map((doc) => {
-		data.push({
-			id: doc.id,
-			storageLocation: doc.data().storageLocation
-		});
-		
-	})
-	return data;
 }
 
 /*
@@ -327,4 +257,83 @@ export const getHistoryBook = async(uid: string) => {
 	})
 	console.log(bookInfo)
 	return bookInfo;
+}
+
+/*
+	本の登録
+*/
+
+
+export const setBook = async(values: FormValues) => {
+
+	const bookRef = doc(db, "books", autoID());
+	const storageRef = doc(db, "storages", autoID());
+
+	try {
+		await runTransaction(db, async (transaction) => {
+			if (values.storageLocation === "new") {
+				transaction.set(storageRef, {
+					storageLocation: values.newStorageLocation,
+				});
+				transaction.set(bookRef, {
+					isbn: values.isbn,
+					title: values.title,
+					author: values.author,
+					publisherName: values.publisherName,
+					publicationDate: parseDate(values.publicationDate),
+					purchaseDate: parseDate(values.purchaseDate),
+					price: values.price,
+					versionNumber: values.versionNumber,
+					imageLink: values.imageLink,
+					storageLocation: values.newStorageLocation,
+					lendingStatus: false,
+					createdAt: serverTimestamp(),
+					updatedAt: serverTimestamp(),
+				});
+			} else {
+				transaction.set(bookRef, {
+					isbn: values.isbn,
+					title: values.title,
+					author: values.author,
+					publisherName: values.publisherName,
+					publicationDate: parseDate(values.publicationDate),
+					purchaseDate: parseDate(values.purchaseDate),
+					price: values.price,
+					versionNumber: values.versionNumber,
+					imageLink: values.imageLink,
+					storageLocation: values.storageLocation,
+					lendingStatus: false,
+					createdAt: serverTimestamp(),
+					updatedAt: serverTimestamp(),
+				});
+			}
+		})
+	} catch(e) {
+		console.log(e + "登録に失敗しました");
+		if (values.newStorageLocation === "new") {
+			await deleteDoc(doc(db, "storages", values.storageLocation));
+		}
+	}
+}
+
+export const getStorageLocation = async() => {
+	const querySnapshot = await getDocs(collection(db, "storages"));
+	const data: StorageLocation[] = [];
+	querySnapshot.docs.map((doc) => {
+		data.push({
+			id: doc.id,
+			storageLocation: doc.data().storageLocation
+		});
+		
+	})
+	return data;
+}
+
+
+export const deleteBook = async(bookId: string) => {
+	const q = query(collection(db, "lending"), where(bookId, "==", bookId));
+	const querySnapshot = await getDocs(q);
+	if(querySnapshot.docs.length === 0) {
+		await deleteDoc(doc(db, "books", bookId));
+	}
 }

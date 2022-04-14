@@ -1,7 +1,9 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Top from "./ui/pages/reading/Top";
-import Book from "./ui/pages/admin/Book";
+import BookNew from "./ui/pages/admin/BookNew";
+import BookList from "./ui/pages/admin/BookList";
+import BookUpdate from "./ui/pages/admin/BookUpdate";
 import Signup from "./ui/pages/login/Signup";
 import Login from "./ui/pages/login/Login";
 import Show from "./ui/pages/reading/Show";
@@ -21,7 +23,9 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route index element={<Login />} />
-          <Route path="/book" element={<Book />} />
+          <Route path="/admin/book" element={<BookNew />} />
+          <Route path="/admin/bookList" element={<BookList />} />
+          <Route path="/admin/update/:bookId" element={<BookUpdate />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/top" element={<Top />} />
           <Route path="/show/:isbn" element={<Show />} />

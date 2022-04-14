@@ -41,5 +41,9 @@ service cloud.firestore {
     match /lending/{lendingId} {
       allow read, write: if isAuthenticated() && userExists();
     }
+
+    match /storages/{storageId} {
+      allow read, write: if isAdmin();
+    }
   }
 }

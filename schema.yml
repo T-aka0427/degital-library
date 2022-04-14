@@ -49,3 +49,9 @@ lending: {
     updatedAt: timestamp
   }
 }
+
+storages: 
+  id: {
+    storageLocation: string,
+  }
+}

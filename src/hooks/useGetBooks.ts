@@ -20,9 +20,8 @@ export const useGetBooks = () => {
 				return item;
 			}
 		});
-
+		
 		setImages(result);
-
 	}
 
 	return images;

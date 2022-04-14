@@ -1,23 +1,40 @@
-/* ログイン
-  google認証でログイン
-*/
+import React from 'react'
+import { Link } from 'react-router-dom';
 
-import React, { useEffect } from "react";
-import Card from "./Card";
+import Grid from "@mui/material/Grid";
+import { Container } from '@mui/material';
 
-import Container from "@mui/material/Container";
+import { useGetBooks } from '../../../hooks/useGetBooks'
+import Header from '../../templates/Header';
+import Footer from '../../templates/Footer';
 
-import Header from "../../../ui/templates/Header";
-import Footer from "../../templates/Footer";
+
 
 const Top = () => {
-  return (
-    <Container maxWidth="lg">
-      <Header />
-      <Card />
-      <Footer />
-    </Container>
-  );
-};
 
-export default Top;
+	const images = useGetBooks();
+
+	const imageCard = images.map((i) => (
+		<Grid item md={3} xs={6} key={i.isbn} sx={{mt: 2.5, mb:2.5}}>
+			<Link to={`/show/${i.isbn}`} style={{textDecoration: "none"}}>
+				<img src={i.imageLink} style={{boxShadow: "0 0 5px gray",}}/>
+			</Link>
+		</Grid>
+	))
+
+  return (
+		<Container maxWidth="lg">
+			<Header />
+			<Container 
+				maxWidth="md"
+			>
+				<Grid container sx={{textAlign: "center"}}>
+					{imageCard}
+				</Grid>
+			</Container>
+			<Footer />
+		</Container>
+  )
+}
+
+export default Top

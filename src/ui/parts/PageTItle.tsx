@@ -14,7 +14,6 @@ const PageTitle = (props: Props) => {
       textAlign: "center",
       mt: 5,
       mb: 6,
-      pl: 3,
     }}>
       {props.title}
     </Typography>
