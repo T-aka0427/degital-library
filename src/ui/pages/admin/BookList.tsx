@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { Container, Grid } from '@mui/material';
 import { Box } from '@mui/system';
 import { useTheme } from '@mui/material/styles';
@@ -34,6 +34,20 @@ const BookList = () => {
       <Container 
       maxWidth="sm"
       >
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            p: 1,
+            mb: 2,
+            }}>
+          <Link to="/admin/book/new" style={{marginRight: 15}}>
+            書籍登録
+          </Link>
+          <Link to="#">
+            ユーザー
+          </Link>
+        </Box>
         {books.map((item) =>
         <Grid container key={item.bookId} sx={{mt: 7, mb: 7}}>
           <Grid item md={6} sm={12} sx={{mt: 3}}>
@@ -71,7 +85,7 @@ const BookList = () => {
                   <Grid item md={4}>
                     <DefaultButton
                       type="button" 
-                      onClick={() => {navigate(`/return/new/${uid}/${item.isbn}/${item.bookId}`)}} 
+                      onClick={() => {navigate(`/admin/book/update/${item.bookId}`)}} 
                       label="編集"
                     />
                   </Grid>
@@ -111,7 +125,7 @@ const BookList = () => {
                   <Grid item xs={4}>
                     <DefaultButton
                       type="button" 
-                      onClick={() => {navigate(`/return/new/${uid}/${item.isbn}/${item.bookId}`)}} 
+                      onClick={() => {navigate(`/admin/book/update/${item.bookId}`)}} 
                       label="編集"
                     />
                   </Grid>

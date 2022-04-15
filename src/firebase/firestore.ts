@@ -38,6 +38,14 @@ export const setUser = (uid: string, name: string) => {
 	});
 }
 
+export const isAdmin = async(uid: string) => {
+	const ref = doc(db, "users", uid);
+	const snapShot = await getDoc(ref);
+	if(snapShot.exists()) {
+		return snapShot.data().adminFlag;
+	}
+}
+
 /*
 	書籍情報の取得
 */
@@ -205,7 +213,7 @@ export const getReturnBook = async(bookId: string, uid: string) => {
 	const querySnapshot = await getDocs(q);
 	const bookData = querySnapshot.docs[0].data();
 	const returnInfo: HistoryBook = {
-		bookId: bookData.bookId,
+		historyId: querySnapshot.docs[0].id,
 		title: bookData.title,
 		author: bookData.author,
 		checkoutDate: dayjs(bookData.checkoutDate.toDate()).format("YYYY年MM月DD日") as string,
@@ -246,7 +254,7 @@ export const getHistoryBook = async(uid: string) => {
 	const querySnapshot = await getDocs(q);
 	querySnapshot.docs.map((doc) => {
 		bookInfo.push({
-			bookId: doc.data().bookId,
+			historyId: doc.id,
 			title: doc.data().title,
 			author: doc.data().author,
 			checkoutDate: dayjs(doc.data().checkoutDate.toDate()).format("YYYY年MM月DD日") as string,
@@ -260,7 +268,7 @@ export const getHistoryBook = async(uid: string) => {
 }
 
 /*
-	本の登録
+	本の登録・変更・削除
 */
 
 
@@ -337,3 +345,27 @@ export const deleteBook = async(bookId: string) => {
 		await deleteDoc(doc(db, "books", bookId));
 	}
 }
+
+export const getBookAll = async(bookId: string) => {
+	const bookData: FormValues[] = [];
+	const ref = doc(db, "books", bookId);
+
+	const snapShot = await getDoc(ref);
+	if(snapShot.exists()) {
+		bookData.push({
+			isbn: snapShot.data().isbn,
+			title: snapShot.data().title,
+			author: snapShot.data().author,
+			publisherName: snapShot.data().publisherName,
+			publicationDate: dayjs(snapShot.data().publicationDate.toDate()).format("YYYY-MM-DD") as string,
+			purchaseDate: dayjs(snapShot.data().purchaseDate.toDate()).format("YYYY-MM-DD") as string,
+			price: snapShot.data().price,
+			versionNumber: snapShot.data().versionNumber,
+			imageLink: snapShot.data().imageLink,
+			storageLocation: snapShot.data().storageLocation,
+			newStorageLocation: ""
+		});
+	}
+	console.log(bookData[0])
+	return bookData[0];
+} 

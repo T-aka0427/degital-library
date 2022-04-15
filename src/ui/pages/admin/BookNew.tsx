@@ -47,8 +47,12 @@ const BookNew = () => {
             p: 1,
             mb: 2,
             }}>
-          <Link to="/admin/bookList" style={{marginRight: 15}}>書籍一覧</Link>
-          <Link to="/admin/bookList">ユーザー</Link>
+          <Link to="/admin/book/show" style={{marginRight: 15}}>
+            書籍一覧
+          </Link>
+          <Link to="#">
+            ユーザー
+          </Link>
         </Box>
         {submit.flag && 
           <Typography

@@ -2,9 +2,9 @@ import React from 'react';
 
 import { Typography } from '@mui/material';
 
-import { AllBooks } from '../../../models/admin/GetBooks';
+import { Book } from '../../../models/admin/GetBooks';
 
-const BookInfo = (props:  Omit<AllBooks, "imageLink">) => {
+const BookInfo = (props:  Omit<Book, "imageLink">) => {
   return (
     <>
     <Typography sx={{pl: 3, pt: 2, fontSize: 12}}>

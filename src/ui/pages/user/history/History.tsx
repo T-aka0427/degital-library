@@ -19,7 +19,7 @@ const History = () => {
     maxWidth="sm"
     >
       {history.map((item) =>
-      <Grid container key={item.bookId} sx={{mt: 7, mb: 7}}>
+      <Grid container key={item.historyId} sx={{mt: 7, mb: 7}}>
         <Grid item md={6} xs={12}>
           {pcSize ?
             <img 

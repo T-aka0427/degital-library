@@ -3,11 +3,11 @@ import { useState, useEffect } from "react";
 import { query, collection, onSnapshot } from "firebase/firestore";
 import dayjs from "dayjs";
 import { db } from "../../firebase/firebase";
-import { AllBooks } from "../../models/admin/GetBooks";
+import { Book } from "../../models/admin/GetBooks";
 
 export const useGetBooks = () => {
   
-	const [books, setBooks] = useState<AllBooks[]>([]);
+	const [books, setBooks] = useState<Book[]>([]);
 
 	useEffect(() => {
 		fetch();
@@ -16,7 +16,7 @@ export const useGetBooks = () => {
 	const fetch = () => {
 		const q = query(collection(db, "books"));
 		onSnapshot(q, (querySnapshot) => {
-			const books: AllBooks[] = [];
+			const books: Book[] = [];
 			querySnapshot.docs.map((doc) => {
 				books.push({
 					bookId: doc.id,

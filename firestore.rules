@@ -5,8 +5,8 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    function isUserAuthenticated(uid) {
-      return request.auth.uid == uid;
+    function isUserAuthenticated(userId) {
+      return request.auth.uid == userId;
     }
 
     function userExists() {
@@ -23,8 +23,12 @@ service cloud.firestore {
       getAdminFlag();
     }
 
-    match /users/{uid} {
-      allow read: if isAuthenticated() && isUserAuthenticated(uid);
+    function squeeze() {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(['lendingStatus']);
+    }
+
+    match /users/{userId} {
+      allow read: if isAuthenticated() && isUserAuthenticated(userId);
       allow write: if isAuthenticated();
       match /history/{bookId} {
         allow read, write: if isAuthenticated() && userExists();
@@ -34,7 +38,7 @@ service cloud.firestore {
     match /books/{bookId} {
       allow read: if isAuthenticated() && userExists();
       allow create: if isAdmin();
-      allow update: if isAuthenticated() && userExists();
+      allow update: if isAdmin() || ( isAuthenticated() && userExists() && squeeze() );
       allow delete: if isAdmin();
     }
 

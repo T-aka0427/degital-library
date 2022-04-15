@@ -1,5 +1,5 @@
 export type HistoryBook = {
-  bookId: string;
+  historyId: string;
   title: string;
   author: string;
   imageLink: string;

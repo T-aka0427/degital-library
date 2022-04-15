@@ -23,9 +23,9 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route index element={<Login />} />
-          <Route path="/admin/book" element={<BookNew />} />
-          <Route path="/admin/bookList" element={<BookList />} />
-          <Route path="/admin/update/:bookId" element={<BookUpdate />} />
+          <Route path="/admin/book/new" element={<BookNew />} />
+          <Route path="/admin/book/show" element={<BookList />} />
+          <Route path="/admin/book/update/:bookId" element={<BookUpdate />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/top" element={<Top />} />
           <Route path="/show/:isbn" element={<Show />} />

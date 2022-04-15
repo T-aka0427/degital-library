@@ -13,11 +13,13 @@ import { signOut } from "firebase/auth";
 import { AuthContext } from "../../auth/AuthProvider";
 import { auth } from '../../firebase/firebase';
 import DefaultButton from '../parts/DefaultButton';
+import { useIsAdmin } from '../../hooks/admin/useIsAdmin';
 
 const Header = () => {
 
   const navigate = useNavigate();
   const currentUser = useContext(AuthContext);
+  const adminFlag = useIsAdmin();
 
   const logOut = ()=> {
     signOut(auth).then(() => {
@@ -48,15 +50,17 @@ const Header = () => {
               Degital Library
             </Link>
           </Typography>
-          <LockOpenIcon 
-            sx={{
-              fontSize: 37, 
-              color: grey[900],
-              mr: 1,
-              mt: 5
-            }}
-            onClick={()=> navigate('/admin/book')}
-          />
+          {adminFlag && 
+            <LockOpenIcon 
+              sx={{
+                fontSize: 37, 
+                color: grey[900],
+                mr: 1,
+                mt: 5
+              }}
+              onClick={()=> navigate('/admin/book/new')}
+            />
+          }
           <AccountCircleIcon 
             sx={{
               fontSize: 40, 
