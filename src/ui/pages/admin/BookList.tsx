@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Container, Grid } from '@mui/material';
 import { Box } from '@mui/system';
 import { useTheme } from '@mui/material/styles';
@@ -11,11 +11,11 @@ import BookInfo from './BookInfo';
 import Header from '../../templates/Header';
 import Footer from '../../templates/Footer';
 import { deleteBook } from '../../../firebase/firestore';
+import DisabledButton from '../../parts/DisabledButton';
 
 const BookList = () => {
   const books = useGetBooks();
   console.log(books)
-  const {uid} = useParams();
   const navigate = useNavigate();
   const theme = useTheme();
   const pcSize = useMediaQuery(theme.breakpoints.up('md'));
@@ -31,9 +31,7 @@ const BookList = () => {
   return (
     <Container maxWidth="lg">
       <Header />
-      <Container 
-      maxWidth="sm"
-      >
+      <Container maxWidth="md">
         <Box
           sx={{
             display: 'flex',
@@ -48,6 +46,10 @@ const BookList = () => {
             ユーザー
           </Link>
         </Box>
+      </Container>
+      <Container 
+      maxWidth="sm"
+      >
         {books.map((item) =>
         <Grid container key={item.bookId} sx={{mt: 7, mb: 7}}>
           <Grid item md={6} sm={12} sx={{mt: 3}}>
@@ -81,22 +83,33 @@ const BookList = () => {
                   createdAt={item.createdAt}
                   updatedAt={item.updatedAt}
                 />
-                <Grid container sx={{mt: 3, ml: 4, display: "flex", justifyContent: "center"}}>
-                  <Grid item md={4}>
-                    <DefaultButton
-                      type="button" 
-                      onClick={() => {navigate(`/admin/book/update/${item.bookId}`)}} 
-                      label="編集"
-                    />
+                {!item.lendingStatus?
+                  <Grid container sx={{mt: 3, ml: 4, display: "flex", justifyContent: "center"}}>
+                    <Grid item md={4}>
+                      <DefaultButton
+                        type="button" 
+                        onClick={() => {navigate(`/admin/book/update/${item.bookId}`)}} 
+                        label="編集"
+                      />
+                    </Grid>
+                    <Grid item md={4}>
+                      <DefaultButton
+                        type="button" 
+                        onClick={() => {onClickDelete(item.bookId)}} 
+                        label="削除"
+                      />
+                    </Grid>
                   </Grid>
-                  <Grid item md={4}>
-                    <DefaultButton
-                      type="button" 
-                      onClick={() => {onClickDelete(item.bookId)}} 
-                      label="削除"
-                    />
+                : 
+                  <Grid container sx={{mt: 3, ml: 4, display: "flex", justifyContent: "center"}}>
+                    <Grid item md={4}>
+                      <DisabledButton label="編集"/>
+                    </Grid>
+                    <Grid item md={4}>
+                      <DisabledButton label="削除"/>
+                    </Grid>
                   </Grid>
-                </Grid>
+                }
               </Box>
             :
               <Box
@@ -121,22 +134,33 @@ const BookList = () => {
                   createdAt={item.createdAt}
                   updatedAt={item.updatedAt} 
                 />
-                <Grid container sx={{mt: 3, ml:3, display: "flex", justifyContent: "center"}}>
+                {!item.lendingStatus?
+                  <Grid container sx={{mt: 3, ml:3, display: "flex", justifyContent: "center"}}>
+                    <Grid item xs={4}>
+                      <DefaultButton
+                        type="button" 
+                        onClick={() => {navigate(`/admin/book/update/${item.bookId}`)}} 
+                        label="編集"
+                      />
+                    </Grid>
+                    <Grid item xs={4}>
+                      <DefaultButton
+                        type="button" 
+                        onClick={() => {onClickDelete(item.bookId)}} 
+                        label="削除"
+                      />
+                    </Grid>
+                  </Grid>
+                :
+                  <Grid container sx={{mt: 3, ml:3, display: "flex", justifyContent: "center"}}>
                   <Grid item xs={4}>
-                    <DefaultButton
-                      type="button" 
-                      onClick={() => {navigate(`/admin/book/update/${item.bookId}`)}} 
-                      label="編集"
-                    />
+                    <DisabledButton label="編集" />
                   </Grid>
                   <Grid item xs={4}>
-                    <DefaultButton
-                      type="button" 
-                      onClick={() => {onClickDelete(item.bookId)}} 
-                      label="削除"
-                    />
+                    <DisabledButton label="削除" />
                   </Grid>
-                </Grid>
+                </Grid>              
+                }
               </Box>
             }
           </Grid>

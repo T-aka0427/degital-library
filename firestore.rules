@@ -31,8 +31,14 @@ service cloud.firestore {
       allow read: if isAuthenticated() && isUserAuthenticated(userId);
       allow write: if isAuthenticated();
       match /history/{bookId} {
-        allow read, write: if isAuthenticated() && userExists();
+        allow read: if isAuthenticated() && userExists();
+        allow create: if isAuthenticated() && userExists();
+        allow update: if isAdmin();
       }
+    }
+
+    match /{path=**}/history/{bookId} {
+      allow read: if isAdmin();
     }
 
     match /books/{bookId} {

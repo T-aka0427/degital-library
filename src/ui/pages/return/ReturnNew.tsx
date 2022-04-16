@@ -24,13 +24,12 @@ const ReturnNew = () => {
   const submit = async() => {
     try {
       if(typeof uid === "string" && typeof isbn === "string" && typeof bookId === "string") {
-        const flg = await returnBook(uid, isbn);
-        if(flg) {
-          navigate(`/return/show/${uid}/${isbn}/${bookId}`)
-        }
+        await returnBook(uid, isbn);
+        navigate(`/return/show/${uid}/${isbn}/${bookId}`);
       }
     } catch (e) {
-      console.error("返却に失敗しました")
+      console.error(e);
+      alert("返却手続きに失敗しました");
     }
   }
 

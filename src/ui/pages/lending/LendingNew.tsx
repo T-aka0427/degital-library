@@ -36,7 +36,6 @@ const LendingNew = () => {
       try {
         if(checkFlag === false) {
           setError(true);
-          throw new Error("土日は選択できません")
         }
 
         if( typeof uid === "string" && typeof isbn === "string") {
@@ -48,15 +47,14 @@ const LendingNew = () => {
             returnDate: returnDate(value.checkoutDate),
             storageLocation: value.storageLocation
           }
-          const flg = await borrow(data);
-          if (flg) {
-            navigate(`/lending/show/${uid}/${isbn}/${getBookId(formik.values.storageLocation)}`);
-          }
+          await borrow(data);
+          navigate(`/lending/show/${uid}/${isbn}/${getBookId(formik.values.storageLocation)}`);
         } else {
-          throw new Error("貸出手続きに失敗しました")
+          throw new Error("パラメータに問題があります")
         }
-      } catch (e: any) {
-        console.error(e.name, e.message)
+      } catch (e) {
+        console.error(e);
+        alert("貸出手続きに失敗しました")
       }
     },
     validateOnChange: false,

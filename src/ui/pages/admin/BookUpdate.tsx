@@ -9,7 +9,7 @@ import { Box } from "@mui/system";
 
 
 import { validationSchema } from "../../../validation/bookSchema";
-import { setBook } from "../../../firebase/firestore";
+import { updateBook } from "../../../firebase/firestore";
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
@@ -21,17 +21,18 @@ import { useBookUpdate } from "../../../hooks/admin/useBookUpdate";
 
 const BookUpdate = () => {
 
-  const { formData, error, selectList, submitSuccess, submitFail, submit } = useBookUpdate();
-  console.log(error);
+  const { formData, bookId, selectList, submitSuccess, submitFail, submit } = useBookUpdate();
 
   const formik = useFormik({
     initialValues: formData,
     enableReinitialize: true,
     validationSchema: validationSchema,
-    onSubmit: (values) => {
+    onSubmit: async(values) => {
       try {
-        setBook(values);
-        submitSuccess();
+        if(typeof bookId === "string") {
+          await updateBook(values, bookId);
+          submitSuccess();
+        }
       } catch (e) {
         submitFail();
       }
@@ -285,6 +286,7 @@ const BookUpdate = () => {
                   onChange={formik.handleChange}
                 >
                   {selectList.map((item) =>
+
                     <MenuItem 
                       key={item.id} 
                       value={item.storageLocation}

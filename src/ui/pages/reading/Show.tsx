@@ -1,6 +1,6 @@
 import React, {useContext} from 'react';
 import { useNavigate } from "react-router-dom";
-import { Container, Grid, Typography, Button } from '@mui/material';
+import { Container, Grid, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -10,6 +10,7 @@ import { AuthContext } from "../../../auth/AuthProvider";
 import DefaultButton from '../../parts/DefaultButton';
 import Header from '../../templates/Header';
 import Footer from '../../templates/Footer';
+import DisabledButton from '../../parts/DisabledButton';
 
 
 const Show = () => {
@@ -89,15 +90,7 @@ const Show = () => {
                   </Box>
                 :
                   <Box sx={{mt: 3, ml:12}}>
-                    <Button
-                      type="button"
-                      disabled
-                      variant="contained"
-                    >
-                      <Box sx={{color: '#FFF'}}>
-                        本を借りる
-                      </Box>
-                    </Button>
+                    <DisabledButton label="本を借りる" />
                   </Box> 
                 }
               </Box>
@@ -122,15 +115,7 @@ const Show = () => {
                     </Box>
                   :
                     <Box sx={{mt: 3, ml:12}}>
-                      <Button
-                        type="button"
-                        disabled
-                        variant="contained"
-                      >
-                        <Box sx={{color: '#FFF'}}>
-                          本を借りる
-                        </Box>
-                      </Button> 
+                      <DisabledButton label="本を借りる" />
                     </Box>
                   }
                 </Box>

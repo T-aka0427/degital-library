@@ -23,6 +23,7 @@ books:
     isbn: string,
     title: string,
     author: string,
+    publisherName: string,
     publicationDate: date,
     purchaseDate: date,
     price: number,

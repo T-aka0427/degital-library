@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { db } from "../firebase/firebase";
-import { setDoc, collection, serverTimestamp, doc, runTransaction, query, where, getDocs, deleteDoc, getDoc, limit } from "firebase/firestore";
+import { setDoc, collection, serverTimestamp, doc, runTransaction, query, where, getDocs, deleteDoc, getDoc, limit, collectionGroup } from "firebase/firestore";
 import { FormValues, StorageLocation } from "../models/admin/BookForm";
 import { GetBooks } from "../models/GetBooks";
 import { BookInfo } from "../models/GetBook";
@@ -117,42 +117,37 @@ export const getExistStorageLocation = async(isbn: string) => {
 }
 
 export const borrow = async(data: LendingData) => {
-	try {
-		const q = query(collection(db, "lending"), where("isbn", "==", data.isbn));
-		const querySnapshot = await getDocs(q);
-		if(querySnapshot.docs.length > 0) {
-			throw new Error ("FireStoreError:既に貸出されています");
-		}
-
-		const lendingRef = doc(db, "lending", autoID());
-		const bookRef = doc(db, "books", data.bookId);
-		const bookDoc = await getDoc(bookRef);
-		const bookData = {
-			title: bookDoc.data()?.title,
-			author: bookDoc.data()?.author,
-			imageLink: bookDoc.data()?.imageLink,
-		}
-
-		await runTransaction(db, async (transaction) => {
-			transaction.set(lendingRef, {
-				uid: data.uid,
-				bookId: data.bookId,
-				isbn: data.isbn,
-				title: bookData.title,
-				author: bookData.author,
-				imageLink: bookData.imageLink,
-				checkoutDate: parseDate(data.checkoutDate),
-				returnDate: parseDate(data.returnDate),
-				storageLocation: data.storageLocation,
-				createdAt: serverTimestamp(),
-				updatedAt: serverTimestamp(),
-			});
-			transaction.update(bookRef, {lendingStatus: true})
-		})
-		return true;
-	} catch (e) {
-		console.error(e);
+	const q = query(collection(db, "lending"), where("isbn", "==", data.isbn));
+	const querySnapshot = await getDocs(q);
+	if(querySnapshot.docs.length > 0) {
+		throw new Error ("FireStoreError:既に貸出されています");
 	}
+
+	const lendingRef = doc(db, "lending", autoID());
+	const bookRef = doc(db, "books", data.bookId);
+	const bookDoc = await getDoc(bookRef);
+	const bookData = {
+		title: bookDoc.data()?.title,
+		author: bookDoc.data()?.author,
+		imageLink: bookDoc.data()?.imageLink,
+	}
+
+	await runTransaction(db, async (transaction) => {
+		transaction.set(lendingRef, {
+			uid: data.uid,
+			bookId: data.bookId,
+			isbn: data.isbn,
+			title: bookData.title,
+			author: bookData.author,
+			imageLink: bookData.imageLink,
+			checkoutDate: parseDate(data.checkoutDate),
+			returnDate: parseDate(data.returnDate),
+			storageLocation: data.storageLocation,
+			createdAt: serverTimestamp(),
+			updatedAt: serverTimestamp(),
+		});
+		transaction.update(bookRef, {lendingStatus: true})
+	})
 }
 
 export const getLendingBook = async(bookId: string) => {
@@ -174,38 +169,32 @@ export const getLendingBook = async(bookId: string) => {
 */
 
 export const returnBook = async(uid: string, isbn: string) => {
-	try {
-		const qLending = query(collection(db, "lending"), where("uid", "==", uid), where("isbn", "==", isbn));
-		const snapshotLending = await getDocs(qLending);
-		const lendingRef = snapshotLending.docs[0].ref;
+	const qLending = query(collection(db, "lending"), where("uid", "==", uid), where("isbn", "==", isbn));
+	const snapshotLending = await getDocs(qLending);
+	const lendingRef = snapshotLending.docs[0].ref;
 
-		const bookId = snapshotLending.docs[0].data().bookId as string;
-		const bookRef = doc(db, "books", bookId);
+	const bookId = snapshotLending.docs[0].data().bookId as string;
+	const bookRef = doc(db, "books", bookId);
 
-		const historyRef = doc(db, "users", uid, "history", autoID());
-		const lendingData = snapshotLending.docs[0].data()
+	const historyRef = doc(db, "users", uid, "history", autoID());
+	const lendingData = snapshotLending.docs[0].data()
 
-		await runTransaction(db, async (transaction) => {
-			transaction.update(bookRef, {lendingStatus: false})
-			transaction.set(historyRef, {
-				bookId: bookId,
-				isbn: lendingData.isbn,
-				title: lendingData.title,
-				author: lendingData.author,
-				imageLink: lendingData.imageLink,
-				checkoutDate: lendingData.checkoutDate,
-				returnDate: lendingData.returnDate,
-				storageLocation: lendingData.storageLocation,
-				createdAt: serverTimestamp(),
-				updatedAt: serverTimestamp(),
-			});
-			transaction.delete(lendingRef);
-		})
-		return true;
-	} catch(e) {
-		console.error(e);
-	}
-
+	await runTransaction(db, async (transaction) => {
+		transaction.update(bookRef, {lendingStatus: false})
+		transaction.set(historyRef, {
+			bookId: bookId,
+			isbn: lendingData.isbn,
+			title: lendingData.title,
+			author: lendingData.author,
+			imageLink: lendingData.imageLink,
+			checkoutDate: lendingData.checkoutDate,
+			returnDate: lendingData.returnDate,
+			storageLocation: lendingData.storageLocation,
+			createdAt: serverTimestamp(),
+			updatedAt: serverTimestamp(),
+		});
+		transaction.delete(lendingRef);
+	})
 }
 
 export const getReturnBook = async(bookId: string, uid: string) => {
@@ -273,11 +262,8 @@ export const getHistoryBook = async(uid: string) => {
 
 
 export const setBook = async(values: FormValues) => {
-
-	const bookRef = doc(db, "books", autoID());
-	const storageRef = doc(db, "storages", autoID());
-
-	try {
+		const bookRef = doc(db, "books", autoID());
+		const storageRef = doc(db, "storages", autoID());
 		await runTransaction(db, async (transaction) => {
 			if (values.storageLocation === "new") {
 				transaction.set(storageRef, {
@@ -316,12 +302,6 @@ export const setBook = async(values: FormValues) => {
 				});
 			}
 		})
-	} catch(e) {
-		console.log(e + "登録に失敗しました");
-		if (values.newStorageLocation === "new") {
-			await deleteDoc(doc(db, "storages", values.storageLocation));
-		}
-	}
 }
 
 export const getStorageLocation = async() => {
@@ -366,6 +346,66 @@ export const getBookAll = async(bookId: string) => {
 			newStorageLocation: ""
 		});
 	}
-	console.log(bookData[0])
 	return bookData[0];
-} 
+}
+
+
+export const updateBook = async(values: FormValues, bookId: string) => {
+	const bookRef = doc(db, "books", bookId);
+	const storageRef = doc(db, "storages", autoID());
+	const q = query(collectionGroup(db, 'history'), where("bookId", "==", bookId));
+	const historySnapshot = await getDocs(q);
+	console.log(historySnapshot.docs[0])
+		await runTransaction(db, async(transaction) => {
+			const bookDoc = await transaction.get(bookRef);
+			if(!bookDoc.exists()) {
+				throw "Document does not exist!";
+			}
+			if (values.storageLocation === "new") {
+				transaction.set(storageRef, {
+					storageLocation: values.newStorageLocation,
+				});
+				transaction.update(bookRef, {
+					isbn: values.isbn,
+					title: values.title,
+					author: values.author,
+					publisherName: values.publisherName,
+					publicationDate: parseDate(values.publicationDate),
+					purchaseDate: parseDate(values.purchaseDate),
+					price: values.price,
+					versionNumber: values.versionNumber,
+					imageLink: values.imageLink,
+					storageLocation: values.newStorageLocation,
+					updatedAt: serverTimestamp(),
+				});
+			} else {
+				transaction.update(bookRef, {
+					isbn: values.isbn,
+					title: values.title,
+					author: values.author,
+					publisherName: values.publisherName,
+					publicationDate: parseDate(values.publicationDate),
+					purchaseDate: parseDate(values.purchaseDate),
+					price: values.price,
+					versionNumber: values.versionNumber,
+					imageLink: values.imageLink,
+					storageLocation: values.storageLocation,
+					updatedAt: serverTimestamp(),
+				});
+			}
+			if(historySnapshot.docs.length > 0) {
+				historySnapshot.docs.map((doc) => {
+					console.log(doc.ref)
+					transaction.update(doc.ref, {
+						isbn: values.isbn,
+						title: values.title,
+						author: values.author,
+						imageLink: values.imageLink,
+						storageLocation: values.storageLocation,
+						updatedAt: serverTimestamp(),
+					})
+				})
+			}
+		})
+
+}

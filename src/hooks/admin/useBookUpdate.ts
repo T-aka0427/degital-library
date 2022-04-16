@@ -6,7 +6,6 @@ import { getBookAll, getStorageLocation } from "../../firebase/firestore";
 
 export const useBookUpdate = () => {
   const {bookId} = useParams();
-  const [error, setError] = useState(false);
   const [submit, setSubmit] = useState({flag: true, msg: "", color: ""})
   const [selectList, setSelectList] = useState<StorageLocation[]>([]);
   const [formData, setFormData] = useState<FormValues>(
@@ -40,11 +39,8 @@ export const useBookUpdate = () => {
     setSubmit({...submit, 
       flag: true, 
       msg:"登録に失敗しました",
-      color: "#d32f2f"})
-  }
-
-  const submitReset = ()=> {
-    setSubmit({...submit, flag: false, msg: ""});
+      color: "#d32f2f"
+    })
   }
 
   const fetch = async() => {
@@ -56,5 +52,5 @@ export const useBookUpdate = () => {
     setSelectList(list);
   }
 
-  return { formData, error, selectList, submitSuccess, submitFail, submit };
+  return { formData, bookId, selectList, submitSuccess, submitFail, submit };
 };

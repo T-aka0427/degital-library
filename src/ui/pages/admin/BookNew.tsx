@@ -17,17 +17,18 @@ import Header from "../../templates/Header";
 import Footer from "../../templates/Footer";
 
 const BookNew = () => {
-  const { scan, onChangeIsbn, formData, error, selectList, submitSuccess, submitFail, submit } = useBook();
+  const { isbn, scan, onChangeIsbn, formData, error, selectList, submitSuccess, submitFail, submit, resetForm } = useBook();
   console.log(error);
 
   const formik = useFormik({
     initialValues: formData,
     enableReinitialize: true,
     validationSchema: validationSchema,
-    onSubmit: (values) => {
+    onSubmit: async(values) => {
       try {
-        setBook(values);
+        await setBook(values);
         submitSuccess();
+        resetForm();
       } catch (e) {
         submitFail();
       }
@@ -79,6 +80,7 @@ const BookNew = () => {
                 id="outlined-required"
                 variant="outlined"
                 onChange={onChangeIsbn}
+                value={isbn}
                 sx={{
                   ml:3,
                   mr:3

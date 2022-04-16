@@ -39,7 +39,7 @@ export const useBook = () => {
     setError(false);
 
     try {
-      submitReset();
+      setSubmit({...submit, flag: false, msg: ""});
       //楽天APIでデータを取得
       const rowData = isbn.replace("-", "");
       const encodeIsbn = encodeURI(rowData);
@@ -90,8 +90,22 @@ export const useBook = () => {
       color: "#d32f2f"})
   }
 
-  const submitReset = ()=> {
-    setSubmit({...submit, flag: false, msg: ""});
+  const resetForm = () => {
+    setFormData({
+      ...formData,
+      isbn: "",
+      title: "",
+      author: "",
+      publisherName: "",
+      publicationDate: today(),
+      purchaseDate: today(),
+      price: 0,
+      versionNumber: 0,
+      imageLink: "",
+      storageLocation: "",
+      newStorageLocation: ""
+    })
+    setIsbn("");
   }
 
   const getSelectList = async() => {
@@ -99,5 +113,5 @@ export const useBook = () => {
     setSelectList(list);
   }
 
-  return { scan, onChangeIsbn, formData, loading, error, selectList, submitSuccess, submitFail, submit };
+  return { isbn, scan, onChangeIsbn, formData, setFormData, loading, error, selectList, submitSuccess, submitFail, submit, resetForm };
 };
