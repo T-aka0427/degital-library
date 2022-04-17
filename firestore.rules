@@ -24,36 +24,182 @@ service cloud.firestore {
     }
 
     function squeeze() {
-      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(['lendingStatus']);
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(['lendingStatus'])
+      && request.resource.data.lendingStatus is bool;
     }
+    
+    // shcema validation
+    function isValidUser(user) {
+      return user.size() == 4
+      && 'name' in user && user.name is string
+      && 'adminFlag' in user && user.adminFlag is bool
+      && 'createdAt' in user && user.createdAt is timestamp
+      && 'updatedAt' in user && user.updatedAt is timestamp
+      && request.resource.data.name.size() <= 30
+      && request.resource.data.adminFlag == false
+      && request.resource.data.createdAt == request.time
+      && request.resource.data.updatedAt == request.time;
+  	}
+
+		function isValidBook(book) {
+    	return book.size() == 13
+      && 'isbn' in book && book.isbn is string
+      && 'title' in book && book.title is string
+      && 'author' in book && book.author is string
+      && 'publisherName' in book && book.publisherName is string
+      && 'publicationDate' in book && book.publicationDate is timestamp
+      && 'purchaseDate' in book && book.purchaseDate is timestamp
+      && 'price' in book && book.price is number
+      && 'versionNumber' in book && book.versionNumber is number
+      && 'imageLink' in book && book.imageLink is string
+      && 'storageLocation' in book && book.storageLocation is string
+      && 'lendingStatus' in book && book.lendingStatus is bool
+      && 'createdAt' in book && book.createdAt is timestamp
+      && 'updatedAt' in book && book.updatedAt is timestamp
+      && request.resource.data.isbn.size() <= 20
+      && request.resource.data.title.size() <= 200
+      && request.resource.data.author.size() <= 50
+      && request.resource.data.publisherName.size() <= 50
+      && request.resource.data.price <= 100000
+      && request.resource.data.versionNumber <= 50
+      && request.resource.data.imageLink.size() <= 2048
+      && request.resource.data.storageLocation.size() <= 200
+      && request.resource.data.lendingStatus == false
+      && request.resource.data.createdAt == request.time
+      && request.resource.data.updatedAt == request.time;
+    }
+    
+		function isValidBookUpdate(book) {
+    	return book.size() == 13
+      && 'isbn' in book && book.isbn is string
+      && 'title' in book && book.title is string
+      && 'author' in book && book.author is string
+      && 'publisherName' in book && book.publisherName is string
+      && 'publicationDate' in book && book.publicationDate is timestamp
+      && 'purchaseDate' in book && book.purchaseDate is timestamp
+      && 'price' in book && book.price is number
+      && 'versionNumber' in book && book.versionNumber is number
+      && 'imageLink' in book && book.imageLink is string
+      && 'storageLocation' in book && book.storageLocation is string
+      && 'lendingStatus' in book && book.lendingStatus is bool
+      && 'createdAt' in book && book.createdAt is timestamp
+      && 'updatedAt' in book && book.updatedAt is timestamp
+      && request.resource.data.isbn.size() <= 20
+      && request.resource.data.title.size() <= 200
+      && request.resource.data.author.size() <= 50
+      && request.resource.data.publisherName.size() <= 50
+      && request.resource.data.price <= 100000
+      && request.resource.data.versionNumber <= 50
+      && request.resource.data.imageLink.size() <= 2048
+      && request.resource.data.storageLocation.size() <= 200
+      && request.resource.data.lendingStatus == false
+      && request.resource.data.updatedAt == request.time;
+    }
+    
+    function isValidStorage(storage) {
+    	return storage.size() == 1
+      && 'storageLocation' in storage && storage.storageLocation is string
+      && request.resource.data.storageLocation.size() <= 200;
+    }
+    
+    function isValidLending(lending) {
+			return lending.size() == 11
+      && 'uid' in lending && lending.uid is string
+      && 'bookId' in lending && lending.bookId is string
+      && 'isbn' in lending && lending.isbn is string
+      && 'title' in lending && lending.title is string
+      && 'author' in lending && lending.author is string
+      && 'imageLink' in lending && lending.imageLink is string
+      && 'checkoutDate' in lending && lending.checkoutDate is timestamp
+      && 'returnDate' in lending && lending.returnDate is timestamp
+      && 'storageLocation' in lending && lending.storageLocation is string
+      && 'createdAt' in lending && lending.createdAt is timestamp
+      && 'updatedAt' in lending && lending.updatedAt is timestamp
+      && request.resource.data.uid.size() <= 100
+      && request.resource.data.bookId.size() == 28
+      && request.resource.data.isbn.size() <= 20
+      && request.resource.data.title.size() <= 200
+      && request.resource.data.author.size() <= 50
+      && request.resource.data.imageLink.size() <= 2048
+      && request.resource.data.storageLocation.size() <= 200
+      && request.resource.data.createdAt == request.time
+      && request.resource.data.updatedAt == request.time;
+    }
+    
+    function isValidHistory(history) {
+    	return history.size() == 10
+      && 'bookId' in history && history.bookId is string
+      && 'isbn' in history && history.isbn is string
+      && 'title' in history && history.title is string
+      && 'author' in history && history.author is string
+      && 'imageLink' in history && history.imageLink is string
+      && 'checkoutDate' in history && history.checkoutDate is timestamp
+      && 'returnDate' in history && history.returnDate is timestamp
+      && 'storageLocation' in history && history.storageLocation is string
+      && 'createdAt' in history && history.createdAt is timestamp
+      && 'updatedAt' in history && history.updatedAt is timestamp
+      && request.resource.data.bookId.size() == 28
+      && request.resource.data.isbn.size() <= 20
+      && request.resource.data.title.size() <= 200
+      && request.resource.data.author.size() <= 50
+      && request.resource.data.imageLink.size() <= 2048
+      && request.resource.data.storageLocation.size() <= 200
+      && request.resource.data.createdAt == request.time
+      && request.resource.data.updatedAt == request.time;
+    }
+    
+    function isValidHistoryUpdate(history) {
+    	return history.size() == 10
+      && 'bookId' in history && history.bookId is string
+      && 'isbn' in history && history.isbn is string
+      && 'title' in history && history.title is string
+      && 'author' in history && history.author is string
+      && 'imageLink' in history && history.imageLink is string
+      && 'checkoutDate' in history && history.checkoutDate is timestamp
+      && 'returnDate' in history && history.returnDate is timestamp
+      && 'storageLocation' in history && history.storageLocation is string
+      && 'createdAt' in history && history.createdAt is timestamp
+      && 'updatedAt' in history && history.updatedAt is timestamp
+      && request.resource.data.isbn.size() <= 20
+      && request.resource.data.title.size() <= 200
+      && request.resource.data.author.size() <= 50
+      && request.resource.data.imageLink.size() <= 2048
+      && request.resource.data.storageLocation.size() <= 200
+      && request.resource.data.updatedAt == request.time;
+    }
+    
 
     match /users/{userId} {
-      allow read: if isAuthenticated() && isUserAuthenticated(userId);
-      allow write: if isAuthenticated();
+      allow read: if ( isAuthenticated() && isUserAuthenticated(userId) ) || isAdmin();
+      allow write: if isAuthenticated() && isValidUser(request.resource.data)
       match /history/{bookId} {
-        allow read: if isAuthenticated() && userExists();
-        allow create: if isAuthenticated() && userExists();
-        allow update: if isAdmin();
+        allow read: if ( isAuthenticated() && userExists() ) || isAdmin();
+        allow create: if isAuthenticated() && userExists() && isValidHistory(request.resource.data);
+        allow update: if isAdmin() && isValidHistoryUpdate(request.resource.data);
       }
     }
-
+    
     match /{path=**}/history/{bookId} {
       allow read: if isAdmin();
     }
 
     match /books/{bookId} {
       allow read: if isAuthenticated() && userExists();
-      allow create: if isAdmin();
-      allow update: if isAdmin() || ( isAuthenticated() && userExists() && squeeze() );
+      allow create: if isAdmin() && isValidBook(request.resource.data);
+      allow update: if isAdmin()&& isValidBookUpdate(request.resource.data)
+      || ( isAuthenticated() && userExists() && squeeze() );
       allow delete: if isAdmin();
     }
 
     match /lending/{lendingId} {
-      allow read, write: if isAuthenticated() && userExists();
+      allow read: if isAuthenticated() && userExists();
+      allow create: if isAuthenticated() && userExists() && isValidLending(request.resource.data);
+      allow delete: if isAuthenticated() && userExists();
     }
 
     match /storages/{storageId} {
-      allow read, write: if isAdmin();
+      allow read: if isAdmin();
+      allow write: if isAdmin() && isValidStorage(request.resource.data);
     }
   }
 }

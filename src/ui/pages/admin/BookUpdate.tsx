@@ -7,7 +7,6 @@ import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 import { Box } from "@mui/system";
 
-
 import { validationSchema } from "../../../validation/bookSchema";
 import { updateBook } from "../../../firebase/firestore";
 import InputLabel from '@mui/material/InputLabel';

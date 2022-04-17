@@ -5,6 +5,7 @@ export const validationSchema = Yup.lazy(values => {
     if(values.storageLocation === "new") {
     return Yup.object().shape({
       isbn: Yup.string()
+        .max(20, "13桁で入力してください")
         .required("必須です"),
       title: Yup.string()
         .max(200, "200文字以内で入力してください")
@@ -33,6 +34,7 @@ export const validationSchema = Yup.lazy(values => {
   } else {
     return Yup.object().shape({
       isbn: Yup.string()
+        .max(20, "13桁で入力してください")
         .required("必須です"),
       title: Yup.string()
         .max(200, "200文字以内で入力してください")
