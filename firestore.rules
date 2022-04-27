@@ -198,3 +198,4 @@ service cloud.firestore {
       allow write: if isAdmin() && isValidStorage(request.resource.data);
     }
   }
+}
