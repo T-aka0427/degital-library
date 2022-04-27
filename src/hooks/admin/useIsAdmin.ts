@@ -14,7 +14,7 @@ export const useIsAdmin = () => {
   const fetch = async() => {
     const result = await isAdmin(currentUser);
     if(typeof result === "boolean") {
-      setFlag(true);
+      setFlag(result);
     }
   }
   return flag;

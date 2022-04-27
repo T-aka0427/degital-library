@@ -15,7 +15,7 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
-import { createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { createUserWithEmailAndPassword, onAuthStateChanged, reauthenticateWithCredential, deleteUser } from "firebase/auth";
 
 import { auth } from "../../../firebase/firebase";
 import { setUser } from "../../../firebase/firestore";
@@ -72,30 +72,28 @@ const Signup = () => {
             validationSchema={signupSchema}
             onSubmit={(values, { setSubmitting }) => {
               setTimeout(() => {
-                console.log("aa")
-                alert(JSON.stringify(values, null, 2));
-                createUserWithEmailAndPassword(auth, values.email, values.password)
-                .then(() => {
-                  try {
-                    onAuthStateChanged(auth, (user) => {
-                      if (user) {
-                        setUser(user.uid, values.name);
-                        navigate("/top");
-                      } else {
-                        throw new Error("登録に失敗しました")
-                      }
-                    });
-                  } catch(e: unknown) {
-                    if (e instanceof Error) {
-                      console.error("Error:" + e.message);
+                try {
+                  createUserWithEmailAndPassword(auth, values.email, values.password)
+                  .then(() => {
+                      onAuthStateChanged(auth, async(user) => {
+                        if (user) {
+                          await setUser(user.uid, values.name);
+                          navigate("/top");
+                        } else {
+                          throw new Error("登録に失敗しました")
+                        }
+                      });
+                  })
+                  setSubmitting(false);
+                } catch(e: unknown) {
+                  if( e instanceof Error) {
+                    if (auth.currentUser) {
+                      deleteUser(auth.currentUser);
                     }
+                    alert("Error" + e.message)
                   }
-                })
-                .catch((e) => {
-                  console.log(e + ":エラーが発生しました。")
-                });
-                setSubmitting(false);
-              }, 400);
+                }
+              }, 200);
             }}
             validateOnChange={false}
             validateOnBlur={false}

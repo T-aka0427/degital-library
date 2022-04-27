@@ -28,9 +28,16 @@ const parseDate = (date: string): Date => {
 	ユーザー登録
 */
 
-export const setUser = (uid: string, name: string) => {
+export const setUser = async(uid: string, name: string) => {
+
+	// const querySnapshot = await getDocs(collection(db, "users"));
+	// querySnapshot.docs.map((doc) => {
+	// 	if(doc.data().name === uid) {
+	// 		throw new Error("ユーザー名が既に使われています")
+	// 	}
+	// })
 	const ref = doc(db, "users", uid);
-	setDoc(ref, {
+	await setDoc(ref, {
 		name: name,
 		adminFlag: false,
 		createdAt: serverTimestamp(),
@@ -39,11 +46,14 @@ export const setUser = (uid: string, name: string) => {
 }
 
 export const isAdmin = async(uid: string) => {
-	const ref = doc(db, "users", uid);
-	const snapShot = await getDoc(ref);
-	if(snapShot.exists()) {
-		return snapShot.data().adminFlag;
-	}
+	const querySnapshot = await getDocs(collection(db, "users"));
+	let flag = false;
+	querySnapshot.docs.map((doc) => {
+		if(uid === doc.id) {
+			flag = doc.data().adminFlag as boolean;
+		}
+	})
+	return flag;
 }
 
 /*
@@ -117,9 +127,9 @@ export const getExistStorageLocation = async(isbn: string) => {
 }
 
 export const borrow = async(data: LendingData) => {
-	const q = query(collection(db, "lending"), where("isbn", "==", data.isbn));
+	const q = query(collection(db, "books"), where("isbn", "==", data.isbn), where("lendingStatus", "==", false));
 	const querySnapshot = await getDocs(q);
-	if(querySnapshot.docs.length > 0) {
+	if(querySnapshot.docs.length == 0) {
 		throw new Error ("FireStoreError:既に貸出されています");
 	}
 

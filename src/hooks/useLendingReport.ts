@@ -17,9 +17,7 @@ export const useLendingReport = (arg: string) => {
   const {uid, bookId} = useParams();
 
 	useEffect(() => {
-		setTimeout(() => {
 		fetch();
-		}, 200);
 	}, []);
 
 	const fetch = async() => {

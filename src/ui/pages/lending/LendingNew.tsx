@@ -36,6 +36,7 @@ const LendingNew = () => {
       try {
         if(checkFlag === false) {
           setError(true);
+          throw new Error("貸出日付の選択に誤りがあります")
         }
 
         if( typeof uid === "string" && typeof isbn === "string") {

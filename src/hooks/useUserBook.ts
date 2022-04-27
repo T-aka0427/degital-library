@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams } from 'react-router-dom';
 
 import { getUserBook, getHistoryBook } from "../firebase/firestore";
@@ -12,19 +12,17 @@ export const useUserBook = () => {
   const {uid} = useParams();
 
 	useEffect(() => {
-		setTimeout(() => {
 		fetch();
-		}, 200);
 	}, []);
 
-	const fetch = async() => {
+	const fetch = useCallback(async() => {
     if(typeof uid == "string") {
 			const lendingData = await getUserBook(uid);
       const historyData = await getHistoryBook(uid);
 			setBookInfo(lendingData);
       setHistory(historyData);
     }
-	}
+	}, [])
 
 	return { bookInfo, uid, history };
 };

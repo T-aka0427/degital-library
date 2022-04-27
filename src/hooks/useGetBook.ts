@@ -23,9 +23,7 @@ export const useGetBook = () => {
   const {isbn} = useParams();
 
 	useEffect(() => {
-		setTimeout(() => {
 		fetch();
-		}, 200);
 	}, []);
 
 	const fetch = async() => {

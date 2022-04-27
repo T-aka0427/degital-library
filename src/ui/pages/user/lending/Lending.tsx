@@ -16,6 +16,7 @@ const Lending = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   const pcSize = useMediaQuery(theme.breakpoints.up('md'));
+  console.log(bookInfo)
   
   return (
     <Container 

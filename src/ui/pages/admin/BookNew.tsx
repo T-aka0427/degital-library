@@ -17,8 +17,7 @@ import Header from "../../templates/Header";
 import Footer from "../../templates/Footer";
 
 const BookNew = () => {
-  const { isbn, scan, onChangeIsbn, formData, error, selectList, submitSuccess, submitFail, submit, resetForm } = useBook();
-  console.log(error);
+  const { isbn, setLoading, onChangeIsbn, formData, error, selectList, submitSuccess, submitFail, submit, resetForm } = useBook();
 
   const formik = useFormik({
     initialValues: formData,
@@ -91,7 +90,7 @@ const BookNew = () => {
           <Grid item md={3} sm={4} sx={{mt:1}}>
             <DefaultButton 
               type="button" 
-              onClick={scan} 
+              onClick={() => setLoading(true)} 
               label="スキャン"
             />
           </Grid>

@@ -5,10 +5,6 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    function isUserAuthenticated(userId) {
-      return request.auth.uid == userId;
-    }
-
     function userExists() {
       return exists(/databases/$(database)/documents/users/$(request.auth.uid));
     }
@@ -170,7 +166,7 @@ service cloud.firestore {
     
 
     match /users/{userId} {
-      allow read: if ( isAuthenticated() && isUserAuthenticated(userId) ) || isAdmin();
+      allow read: if ( isAuthenticated() && userExists() ) || isAdmin();
       allow write: if isAuthenticated() && isValidUser(request.resource.data)
       match /history/{bookId} {
         allow read: if ( isAuthenticated() && userExists() ) || isAdmin();
@@ -202,4 +198,3 @@ service cloud.firestore {
       allow write: if isAdmin() && isValidStorage(request.resource.data);
     }
   }
-}

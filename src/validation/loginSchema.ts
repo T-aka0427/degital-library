@@ -2,6 +2,7 @@ import * as Yup from "yup";
 
 export const signupSchema = Yup.object({
     name: Yup.string()
+      .min(4, "4文字以上入力してください")
       .max(30, "30文字以内で入力してください")
       .required("必須です"),
     email: Yup.string()
@@ -9,7 +10,7 @@ export const signupSchema = Yup.object({
       .max(50, "50文字以内で入力してください")
       .required("必須です"),
     password: Yup.string()
-      .min(4, "4文字以上で入力してください")
+      .min(7, "7文字以上で入力してください")
       .required("必須です"),
     confirmPassword: Yup.string()
       .oneOf([Yup.ref('password')], 'passwordが一致しません。')
