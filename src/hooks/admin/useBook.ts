@@ -50,14 +50,12 @@ export const useBook = () => {
       if(encodeIsbn) {
         const bookUrl = `https://app.rakuten.co.jp/services/api/BooksBook/Search/20170404?format=json&isbn=${encodeIsbn}&applicationId=1045299121833564114`;
         axios.get(bookUrl).then((res) => {
-          console.log(res);
           if (res.data.Items.length === 0) {
             setError(true);
             throw "データの取得に失敗しました";
           }
           const JSON_Parse = JSON.parse(JSON.stringify(res));
           const item = JSON_Parse.data.Items[0].Item;
-          console.log(item);
           setFormData({ ...formData,
             isbn: isbn,
             title: item.title,
@@ -71,7 +69,6 @@ export const useBook = () => {
             storageLocation: "",
             newStorageLocation: "",
           });
-          console.log(formData);
         });
       }
     } catch (e){

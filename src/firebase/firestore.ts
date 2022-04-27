@@ -29,13 +29,6 @@ const parseDate = (date: string): Date => {
 */
 
 export const setUser = async(uid: string, name: string) => {
-
-	// const querySnapshot = await getDocs(collection(db, "users"));
-	// querySnapshot.docs.map((doc) => {
-	// 	if(doc.data().name === uid) {
-	// 		throw new Error("ユーザー名が既に使われています")
-	// 	}
-	// })
 	const ref = doc(db, "users", uid);
 	await setDoc(ref, {
 		name: name,
@@ -243,7 +236,6 @@ export const getUserBook = async(uid: string) => {
 			storageLocation: doc.data().storageLocation
 		})
 	});
-	console.log(bookInfo)
 	return bookInfo;
 }
 
@@ -262,7 +254,6 @@ export const getHistoryBook = async(uid: string) => {
 			storageLocation: doc.data().storageLocation,
 		})
 	})
-	console.log(bookInfo)
 	return bookInfo;
 }
 
@@ -417,5 +408,4 @@ export const updateBook = async(values: FormValues, bookId: string) => {
 				})
 			}
 		})
-
 }

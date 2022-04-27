@@ -12,7 +12,6 @@ import Footer from '../../templates/Footer';
 
 const Top = () => {
 	const images = useGetBooks();
-	console.log(images)
 
 	const imageCard = images.map((i) => (
 		<Grid item md={3} xs={6} key={i.isbn} sx={{mt: 2.5, mb:2.5}}>

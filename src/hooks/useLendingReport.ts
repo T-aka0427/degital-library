@@ -24,12 +24,10 @@ export const useLendingReport = (arg: string) => {
     if(typeof bookId === "string" && typeof uid === "string") {
       if(arg === "lending") {
         const data = await getLendingBook(bookId);
-        console.log(data)
         setReportInfo(data);
       }
       if(arg === "return") {
         const data = await getReturnBook(bookId, uid);
-        console.log(data)
         setReportInfo(data);
       }
     }
