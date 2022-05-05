@@ -48,7 +48,7 @@ export const useBook = () => {
       const rowData = isbn.replace("-", "");
       const encodeIsbn = encodeURI(rowData);
       if(encodeIsbn) {
-        const bookUrl = `https://app.rakuten.co.jp/services/api/BooksBook/Search/20170404?format=json&isbn=${encodeIsbn}&applicationId=1045299121833564114`;
+        const bookUrl = `https://app.rakuten.co.jp/services/api/BooksBook/Search/20170404?format=json&isbn=${encodeIsbn}&applicationId=${process.env.REACT_APP_APPLICATION_ID}`;
         axios.get(bookUrl).then((res) => {
           if (res.data.Items.length === 0) {
             setError(true);
