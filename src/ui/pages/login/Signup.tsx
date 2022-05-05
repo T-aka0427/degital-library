@@ -71,29 +71,27 @@ const Signup = () => {
             }}
             validationSchema={signupSchema}
             onSubmit={(values, { setSubmitting }) => {
-              setTimeout(() => {
-                try {
-                  createUserWithEmailAndPassword(auth, values.email, values.password)
-                  .then(() => {
-                      onAuthStateChanged(auth, async(user) => {
-                        if (user) {
-                          await setUser(user.uid, values.name);
-                          navigate("/top");
-                        } else {
-                          throw new Error("登録に失敗しました")
-                        }
-                      });
-                  })
-                  setSubmitting(false);
-                } catch(e: unknown) {
-                  if( e instanceof Error) {
-                    if (auth.currentUser) {
-                      deleteUser(auth.currentUser);
-                    }
-                    alert("Error" + e.message)
+              try {
+                createUserWithEmailAndPassword(auth, values.email, values.password)
+                .then(() => {
+                    onAuthStateChanged(auth, async(user) => {
+                      if (user) {
+                        await setUser(user.uid, values.name);
+                        navigate("/top");
+                      } else {
+                        throw new Error("登録に失敗しました")
+                      }
+                    });
+                })
+                setSubmitting(false);
+              } catch(e: unknown) {
+                if( e instanceof Error) {
+                  if (auth.currentUser) {
+                    deleteUser(auth.currentUser);
                   }
+                  alert("Error" + e.message)
                 }
-              }, 200);
+              }
             }}
             validateOnChange={false}
             validateOnBlur={false}
